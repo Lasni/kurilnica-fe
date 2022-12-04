@@ -7,8 +7,10 @@ import ChatComponent from "../components/chat/ChatComponent";
 import type { Session } from "next-auth";
 
 export default function Home() {
-  const { data } = useSession();
-  console.log("heres data", data);
+  const { data: session } = useSession();
+  console.log("heres session", session);
+
+  const reloadSessionHandler = () => {};
 
   return (
     <>
@@ -18,7 +20,16 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Box>{data?.user.username ? <ChatComponent /> : <AuthComponent />}</Box>
+      <Box>
+        {session?.user.username ? (
+          <ChatComponent />
+        ) : (
+          <AuthComponent
+            session={session}
+            reloadSession={reloadSessionHandler}
+          />
+        )}
+      </Box>
     </>
   );
 }
