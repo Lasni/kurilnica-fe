@@ -10,7 +10,10 @@ export default function Home() {
   const { data: session } = useSession();
   console.log("heres session", session);
 
-  const reloadSessionHandler = () => {};
+  const reloadSessionHandler = () => {
+    const event = new Event("visibilitychange");
+    document.dispatchEvent(event);
+  };
 
   return (
     <>

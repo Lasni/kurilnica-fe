@@ -30,6 +30,7 @@ const AuthComponent: React.FC<IAuthComponentProps> = ({
     }
     try {
       await createUsername({ variables: { username } });
+
       setUsername("");
     } catch (error) {
       console.log("submitUsernameHandler error: ", error);
