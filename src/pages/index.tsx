@@ -4,11 +4,9 @@ import { getSession, useSession } from "next-auth/react";
 import Head from "next/head";
 import AuthComponent from "../components/auth/AuthComponent";
 import ChatComponent from "../components/chat/ChatComponent";
-import type { Session } from "next-auth";
 
 export default function Home() {
   const { data: session } = useSession();
-  console.log("heres session", session);
 
   const reloadSessionHandler = () => {
     const event = new Event("visibilitychange");

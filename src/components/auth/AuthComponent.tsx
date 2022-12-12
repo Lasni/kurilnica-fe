@@ -2,6 +2,7 @@ import { useMutation } from "@apollo/client";
 import { Button, Center, Stack, Text, Image, Input } from "@chakra-ui/react";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import userOperations from "../../graphql/operations/user";
 import {
   CreateUsernameMutationInput,
@@ -42,10 +43,12 @@ const AuthComponent: React.FC<IAuthComponentProps> = ({
 
       // reload session to get new username
       reloadSession();
+      toast.success("Username successfully updated.");
 
       setUsername("");
-    } catch (error) {
+    } catch (error: any) {
       console.log("submitUsernameHandler error: ", error);
+      toast.error(error?.message);
     }
   };
   return (

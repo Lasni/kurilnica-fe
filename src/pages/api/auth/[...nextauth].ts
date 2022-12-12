@@ -14,7 +14,6 @@ export default NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async session({ session, token, user }) {
-      console.log("inside session callback");
       return { ...session, user: { ...session.user, ...user } }; // merge default session user with the database user
     },
   },
