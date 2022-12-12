@@ -16,12 +16,10 @@ const AuthComponent: React.FC<IAuthComponentProps> = ({
   const [username, setUsername] = useState("");
 
   // createUsername mutation
-  const [createUsername, { data, loading, error }] = useMutation<
+  const [createUsername, { loading, error }] = useMutation<
     CreateUsernameMutationOutput,
     CreateUsernameMutationInput
   >(userOperations.Mutations.createUsername);
-
-  console.log("heres data", data, loading, error);
 
   const submitUsernameHandler = async () => {
     if (!username) {
@@ -29,7 +27,21 @@ const AuthComponent: React.FC<IAuthComponentProps> = ({
       return;
     }
     try {
-      await createUsername({ variables: { username } });
+      const { data } = await createUsername({ variables: { username } });
+
+      if (!data?.createUsername) {
+        throw new Error();
+      }
+
+      if (data.createUsername.error) {
+        const {
+          createUsername: { error },
+        } = data;
+        throw new Error(error);
+      }
+
+      // reload session to get new username
+      reloadSession();
 
       setUsername("");
     } catch (error) {
