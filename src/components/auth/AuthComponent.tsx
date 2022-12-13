@@ -63,7 +63,11 @@ const AuthComponent: React.FC<IAuthComponentProps> = ({
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
-              <Button width={`100%`} onClick={submitUsernameHandler}>
+              <Button
+                width={`100%`}
+                onClick={submitUsernameHandler}
+                isLoading={loading}
+              >
                 Save
               </Button>
             </>

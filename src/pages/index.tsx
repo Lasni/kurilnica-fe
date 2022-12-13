@@ -23,7 +23,7 @@ export default function Home() {
 
       <Box>
         {session?.user.username ? (
-          <ChatComponent />
+          <ChatComponent session={session} />
         ) : (
           <AuthComponent
             session={session}
