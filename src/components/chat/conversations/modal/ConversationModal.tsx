@@ -16,6 +16,7 @@ import {
   SearchUsersQueryOutput,
   SearchUsersQueryInput,
 } from "../../../../interfaces/graphqlInterfaces";
+import { UserSearchList } from "./UserSearchList";
 
 interface ConversationModalProps {
   isOpen: boolean;
@@ -43,7 +44,7 @@ export const ConversationModal = ({
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent bg={`#2d2d2d`} pb={4}>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>Create a conversation</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <form onSubmit={handleOnSearchUsers}>
@@ -53,11 +54,12 @@ export const ConversationModal = ({
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                 />
-                <Button type="submit" disabled={!username}>
+                <Button type="submit" disabled={!username} isLoading={loading}>
                   Search
                 </Button>
               </Stack>
             </form>
+            {data?.searchUsers && <UserSearchList users={data?.searchUsers} />}
           </ModalBody>
         </ModalContent>
       </Modal>

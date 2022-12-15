@@ -26,5 +26,6 @@ export interface SearchedUser {
 }
 
 export interface SearchUsersQueryOutput {
-  searchUsers: Array<Pick<User, "id" | "username">>;
+  // searchedUsers: Array<Pick<User, "id" | "username">>;
+  searchUsers: Array<SearchedUser>;
 }
