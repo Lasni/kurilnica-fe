@@ -32,7 +32,7 @@ export const ConversationModal = ({
     SearchUsersQueryInput
   >(userOperations.Queries.searchUsers);
 
-  const handleOnSubmitForm = (event: React.FormEvent) => {
+  const handleOnSearchUsers = (event: React.FormEvent) => {
     // search users query
     event.preventDefault();
     searchUsers({ variables: { username } });
@@ -46,7 +46,7 @@ export const ConversationModal = ({
           <ModalHeader>Modal Title</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <form onSubmit={handleOnSubmitForm}>
+            <form onSubmit={handleOnSearchUsers}>
               <Stack spacing={4}>
                 <Input
                   placeContent="Enter a username"
