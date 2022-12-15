@@ -7,7 +7,7 @@ interface ConversationsListProps {
   session: Session;
 }
 
-const ConversationsList = (props: ConversationsListProps) => {
+const ConversationsList = ({ session }: ConversationsListProps) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const openModalHandler = () => {
@@ -33,7 +33,11 @@ const ConversationsList = (props: ConversationsListProps) => {
           Find or start a conversation
         </Text>
       </Box>
-      <ConversationModal isOpen={modalIsOpen} onClose={closeModalHandler} />
+      <ConversationModal
+        isOpen={modalIsOpen}
+        onClose={closeModalHandler}
+        session={session}
+      />
     </Box>
   );
 };
