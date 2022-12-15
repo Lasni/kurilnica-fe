@@ -1,12 +1,16 @@
-import { Avatar, Button, Flex, Stack, Text } from "@chakra-ui/react";
+import { Avatar, Button, Flex, Icon, Stack, Text } from "@chakra-ui/react";
 import React, { use } from "react";
 import { SearchedUser } from "../../../../interfaces/graphqlInterfaces";
 
 interface UserSearchListProps {
   users: Array<SearchedUser>;
+  addParticipantCallback: (participantToAdd: SearchedUser) => void;
 }
 
-export const UserSearchList = ({ users }: UserSearchListProps) => {
+export const UserSearchList = ({
+  users,
+  addParticipantCallback,
+}: UserSearchListProps) => {
   return (
     <>
       {users.length > 0 ? (
@@ -29,9 +33,9 @@ export const UserSearchList = ({ users }: UserSearchListProps) => {
                   <Button
                     bg="brand.100"
                     _hover={{ bg: "brand.100" }}
-                    onClick={() => {}}
+                    onClick={() => addParticipantCallback(user)}
                   >
-                    Invite
+                    Select
                   </Button>
                 </Flex>
               </>

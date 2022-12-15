@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   Button,
+  Icon,
   Input,
   Modal,
   ModalBody,
@@ -17,6 +18,8 @@ import {
   SearchUsersQueryInput,
 } from "../../../../interfaces/graphqlInterfaces";
 import { UserSearchList } from "./UserSearchList";
+import { SearchedUser } from "../../../../interfaces/graphqlInterfaces";
+import { Participants } from "./Participants";
 
 interface ConversationModalProps {
   isOpen: boolean;
@@ -28,6 +31,7 @@ export const ConversationModal = ({
   onClose,
 }: ConversationModalProps) => {
   const [username, setUsername] = useState("");
+  const [participants, setParticipants] = useState<Array<SearchedUser>>([]);
   const [searchUsers, { data, loading, error }] = useLazyQuery<
     SearchUsersQueryOutput,
     SearchUsersQueryInput
@@ -37,6 +41,27 @@ export const ConversationModal = ({
     // search users query
     event.preventDefault();
     searchUsers({ variables: { username } });
+  };
+
+  const handleAddParticipant = (participantToAdd: SearchedUser) => {
+    const alreadyExists = participants.find(
+      (participant) => participant.id === participantToAdd.id
+    );
+    if (alreadyExists) {
+      return;
+    }
+    setParticipants((prevParticipants) => [
+      ...prevParticipants,
+      participantToAdd,
+    ]);
+    setUsername("");
+  };
+
+  const handleRemoveParticipant = (participantId: string) => {
+    const filteredParticipants = participants.filter(
+      (participant) => participant.id !== participantId
+    );
+    setParticipants(filteredParticipants);
   };
 
   return (
@@ -59,7 +84,18 @@ export const ConversationModal = ({
                 </Button>
               </Stack>
             </form>
-            {data?.searchUsers && <UserSearchList users={data?.searchUsers} />}
+            {data?.searchUsers && (
+              <UserSearchList
+                users={data?.searchUsers}
+                addParticipantCallback={handleAddParticipant}
+              />
+            )}
+            {participants.length > 0 && (
+              <Participants
+                participants={participants}
+                removeParticipantCallback={handleRemoveParticipant}
+              />
+            )}
           </ModalBody>
         </ModalContent>
       </Modal>
