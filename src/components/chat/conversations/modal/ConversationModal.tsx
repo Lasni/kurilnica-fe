@@ -106,7 +106,7 @@ export const ConversationModal = ({
       const { data } = await createConversation({
         variables: { participantIds },
       });
-      console.log("data: ", data);
+      console.log("conversation data: ", data);
     } catch (error: any) {
       console.log("on create conversation error: ", error);
       toast.error(`on create conversation error: ${error}`);
