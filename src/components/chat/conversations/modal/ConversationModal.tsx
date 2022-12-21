@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import {
   Button,
-  Icon,
   Input,
   Modal,
   ModalBody,
@@ -11,22 +10,21 @@ import {
   ModalOverlay,
   Stack,
 } from "@chakra-ui/react";
-import { useLazyQuery, useQuery, useMutation } from "@apollo/client";
-import userOperations from "../../../../graphql/operations/user";
-import {
-  SearchUsersQueryOutput,
-  SearchUsersQueryInput,
-} from "../../../../interfaces/graphqlInterfaces";
-import { UserSearchList } from "./UserSearchList";
-import {
-  SearchedUser,
-  CreateConversationMutationOutput,
-  CreateConversationMutationInput,
-} from "../../../../interfaces/graphqlInterfaces";
-import { Participants } from "./Participants";
+import { Session } from "next-auth";
+import { useRouter } from "next/router";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import conversationOperations from "../../../../graphql/operations/conversation";
-import { Session } from "next-auth";
+import userOperations from "../../../../graphql/operations/user";
+import {
+  CreateConversationMutationInput,
+  CreateConversationMutationOutput,
+  SearchedUser,
+  SearchUsersQueryInput,
+  SearchUsersQueryOutput,
+} from "../../../../interfaces/graphqlInterfaces";
+import { Participants } from "./Participants";
+import { UserSearchList } from "./UserSearchList";
 
 interface ConversationModalProps {
   isOpen: boolean;
@@ -42,6 +40,7 @@ export const ConversationModal = ({
   const {
     user: { id: userId },
   } = session;
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [participants, setParticipants] = useState<Array<SearchedUser>>([]);
   //* search users
@@ -107,9 +106,27 @@ export const ConversationModal = ({
         variables: { participantIds },
       });
       console.log("conversation data: ", data);
+      if (!data?.createConversation) {
+        throw new Error("Failed to create conversation");
+      }
+
+      /**
+       * get conversationId and add it to url
+       */
+      const {
+        createConversation: { conversationId },
+      } = data;
+      router.push({ query: { conversationId } });
+
+      /**
+       * clear state and close modal on successful creation
+       */
+      setParticipants([]);
+      setUsername("");
+      onClose();
     } catch (error: any) {
       console.log("on create conversation error: ", error);
-      toast.error(`on create conversation error: ${error}`);
+      toast.error(`On create conversation error`);
     }
   };
 
