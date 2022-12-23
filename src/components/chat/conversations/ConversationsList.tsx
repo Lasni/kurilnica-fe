@@ -1,13 +1,19 @@
 import { Box, Text } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import React, { useState } from "react";
+import { ConversationPopulated } from "../../../../../backend/src/interfaces/graphqlInterfaces";
+import { ConversationItem } from "./ConversationItem";
 import { ConversationModal } from "./modal/ConversationModal";
 
 interface ConversationsListProps {
   session: Session;
+  conversations: Array<ConversationPopulated>;
 }
 
-const ConversationsList = ({ session }: ConversationsListProps) => {
+const ConversationsList = ({
+  session,
+  conversations,
+}: ConversationsListProps) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const openModalHandler = () => {
@@ -38,6 +44,9 @@ const ConversationsList = ({ session }: ConversationsListProps) => {
         onClose={closeModalHandler}
         session={session}
       />
+      {conversations.map((conversation) => (
+        <ConversationItem conversation={conversation} key={conversation.id} />
+      ))}
     </Box>
   );
 };

@@ -105,7 +105,6 @@ export const ConversationModal = ({
       const { data } = await createConversation({
         variables: { participantIds },
       });
-      console.log("conversation data: ", data);
       if (!data?.createConversation) {
         throw new Error("Failed to create conversation");
       }
@@ -125,7 +124,6 @@ export const ConversationModal = ({
       setUsername("");
       onClose();
     } catch (error: any) {
-      console.log("on create conversation error: ", error);
       toast.error(`On create conversation error`);
     }
   };

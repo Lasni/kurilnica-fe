@@ -20,8 +20,6 @@ const ConversationsWrapper: React.FunctionComponent<
     conversationOperations.Queries.conversations
   );
 
-  console.log("here is data:", conversationsData);
-
   return (
     <Box
       width={{ base: `100%`, md: `400px` }}
@@ -31,7 +29,10 @@ const ConversationsWrapper: React.FunctionComponent<
       px={`3`}
     >
       Skeleton loader
-      <ConversationsList session={session} />
+      <ConversationsList
+        session={session}
+        conversations={conversationsData?.conversations || []}
+      />
     </Box>
   );
 };

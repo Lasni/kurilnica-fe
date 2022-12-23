@@ -24,7 +24,6 @@ const AuthComponent: React.FC<IAuthComponentProps> = ({
 
   const submitUsernameHandler = async () => {
     if (!username) {
-      console.log("no username");
       return;
     }
     try {
@@ -47,7 +46,6 @@ const AuthComponent: React.FC<IAuthComponentProps> = ({
 
       setUsername("");
     } catch (error: any) {
-      console.log("submitUsernameHandler error: ", error);
       toast.error(error?.message);
     }
   };
