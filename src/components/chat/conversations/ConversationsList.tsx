@@ -4,16 +4,24 @@ import React, { useState } from "react";
 import { ConversationPopulated } from "../../../../../backend/src/interfaces/graphqlInterfaces";
 import { ConversationItem } from "./ConversationItem";
 import { ConversationModal } from "./modal/ConversationModal";
+import { useRouter } from "next/router";
 
 interface ConversationsListProps {
   session: Session;
   conversations: Array<ConversationPopulated>;
+  onViewConversationCallback: (conversationId: string) => void;
 }
 
 const ConversationsList = ({
   session,
   conversations,
+  onViewConversationCallback,
 }: ConversationsListProps) => {
+  const router = useRouter();
+  const {
+    user: { id: userId },
+  } = session;
+
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const openModalHandler = () => {
@@ -45,7 +53,18 @@ const ConversationsList = ({
         session={session}
       />
       {conversations.map((conversation) => (
-        <ConversationItem conversation={conversation} key={conversation.id} />
+        <div
+          key={conversation.id}
+          onClick={() => onViewConversationCallback(conversation.id)}
+        >
+          <ConversationItem
+            conversation={conversation}
+            isSelected={conversation.id === router.query.conversationId}
+            userId={userId}
+            hasSeenLatestMessage
+            selectedConversationId={conversation.id}
+          />
+        </div>
       ))}
     </Box>
   );

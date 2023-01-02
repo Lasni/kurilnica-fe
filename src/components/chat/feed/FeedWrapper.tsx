@@ -17,7 +17,19 @@ const FeedWrapper: React.FunctionComponent<FeedWrapperProps> = ({
       direction="column"
       display={{ base: conversationId ? "flex" : "none", md: "flex" }}
     >
-      {conversationId ? <Flex>{conversationId}</Flex> : <>no convo selected</>}
+      {conversationId ? (
+        <Flex
+          direction="column"
+          justify="space-between"
+          overflow="hidden"
+          flexGrow={1}
+        >
+          {/* <MessagesHeader /> */}
+          {/* <Messages /> */}
+        </Flex>
+      ) : (
+        <>no convo selected</>
+      )}
     </Flex>
   );
 };

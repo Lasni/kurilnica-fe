@@ -6,6 +6,7 @@ import ConversationsList from "./ConversationsList";
 import { ConversationsQueryOutput } from "../../../interfaces/graphqlInterfaces";
 import { ConversationPopulated } from "../../../../../backend/src/interfaces/graphqlInterfaces";
 import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 interface ConversationsWrapperProps {
   session: Session;
@@ -14,6 +15,7 @@ interface ConversationsWrapperProps {
 const ConversationsWrapper: React.FunctionComponent<
   ConversationsWrapperProps
 > = ({ session }) => {
+  //* useQuery
   const {
     data: conversationsData,
     error: conversationsError,
@@ -23,7 +25,18 @@ const ConversationsWrapper: React.FunctionComponent<
     conversationOperations.Queries.conversations
   );
 
-  console.log("query data", conversationsData);
+  //* useRouter
+  const router = useRouter();
+  const {
+    query: { conversationId },
+  } = router;
+
+  const onViewConversation = async (conversationId: string) => {
+    // 1. push the new conversationId to router query params so that another data fetch is triggered for that conversation's messages
+    router.push({ query: { conversationId } });
+
+    // 2. mark conversation as read
+  };
 
   const subscribeToNewConversations = () => {
     subscribeToMore({
@@ -39,7 +52,6 @@ const ConversationsWrapper: React.FunctionComponent<
         }
       ) => {
         if (!subscriptionData.data) return prev;
-        console.log("subscription data", subscriptionData);
 
         const newConversation = subscriptionData.data.conversationCreated;
         return Object.assign({}, prev, {
@@ -56,16 +68,17 @@ const ConversationsWrapper: React.FunctionComponent<
 
   return (
     <Box
+      display={{ base: conversationId ? "none" : "flex", md: "flex" }}
       width={{ base: `100%`, md: `400px` }}
       border={`1px solid red`}
       bg={`whiteAlpha.50`}
       py={`6`}
       px={`3`}
     >
-      Skeleton loader
       <ConversationsList
         session={session}
         conversations={conversationsData?.conversations || []}
+        onViewConversationCallback={onViewConversation}
       />
     </Box>
   );
