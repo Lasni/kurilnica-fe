@@ -1,5 +1,8 @@
 import { Session, User } from "next-auth";
-import { ConversationPopulated } from "../../../backend/src/interfaces/graphqlInterfaces";
+import {
+  ConversationPopulated,
+  MessagePopulated,
+} from "../../../backend/src/interfaces/graphqlInterfaces";
 
 //* USERS
 
@@ -47,4 +50,13 @@ export interface CreateConversationMutationInput {
 
 export interface ConversationsQueryOutput {
   conversations: Array<ConversationPopulated>;
+}
+
+//* MESSAGES
+export interface MessagesQueryOutput {
+  messages: Array<MessagePopulated>;
+}
+
+export interface MessagesQueryInput {
+  conversationId: string;
 }

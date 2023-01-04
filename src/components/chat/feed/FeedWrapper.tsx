@@ -2,6 +2,7 @@ import { Flex } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
 import MessageInput from "./messages/MessageInput";
+import { Messages } from "./messages/Messages";
 import MessagesHeader from "./messages/MessagesHeader";
 
 interface FeedWrapperProps {
@@ -31,7 +32,7 @@ const FeedWrapper: React.FunctionComponent<FeedWrapperProps> = ({
             flexGrow={1}
           >
             <MessagesHeader conversationId={conversationId} userId={userId} />
-            {/* <Messages /> */}
+            <Messages userId={userId} conversationId={conversationId} />
           </Flex>
           <MessageInput conversationId={conversationId} session={session} />
         </>
