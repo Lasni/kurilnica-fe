@@ -7,6 +7,7 @@ import { ConversationsQueryOutput } from "../../../interfaces/graphqlInterfaces"
 import { ConversationPopulated } from "../../../../../backend/src/interfaces/graphqlInterfaces";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import { SkeletonLoader } from "../../common/SkeletonLoader";
 
 interface ConversationsWrapperProps {
   session: Session;
@@ -69,17 +70,22 @@ const ConversationsWrapper: React.FunctionComponent<
   return (
     <Box
       display={{ base: conversationId ? "none" : "flex", md: "flex" }}
+      flexDir="column"
       width={{ base: `100%`, md: `400px` }}
-      border={`1px solid red`}
+      gap={4}
       bg={`whiteAlpha.50`}
       py={`6`}
       px={`3`}
     >
-      <ConversationsList
-        session={session}
-        conversations={conversationsData?.conversations || []}
-        onViewConversationCallback={onViewConversation}
-      />
+      {conversationsLoading ? (
+        <SkeletonLoader count={6} height="80px" />
+      ) : (
+        <ConversationsList
+          session={session}
+          conversations={conversationsData?.conversations || []}
+          onViewConversationCallback={onViewConversation}
+        />
+      )}
     </Box>
   );
 };

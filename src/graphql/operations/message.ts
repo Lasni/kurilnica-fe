@@ -33,7 +33,10 @@ const messageOperations = {
           conversationId: $conversationId
           senderId: $senderId
           body: $body
-        )
+        ) {
+          success
+          error
+        }
       }
     `,
   },

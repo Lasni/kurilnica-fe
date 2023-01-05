@@ -60,3 +60,17 @@ export interface MessagesQueryOutput {
 export interface MessagesQueryInput {
   conversationId: string;
 }
+
+export interface SendMessageMutationInput {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  body: string;
+}
+
+export interface SendMessageMutationOutput {
+  sendMessage: {
+    success: boolean;
+    error: string;
+  };
+}

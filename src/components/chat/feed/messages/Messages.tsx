@@ -1,12 +1,12 @@
-import { Flex, Stack } from "@chakra-ui/react";
-import React from "react";
 import { useQuery } from "@apollo/client";
+import { Flex, Stack } from "@chakra-ui/react";
+import toast from "react-hot-toast";
+import messageOperations from "../../../../graphql/operations/message";
 import {
   MessagesQueryInput,
   MessagesQueryOutput,
 } from "../../../../interfaces/graphqlInterfaces";
-import messageOperations from "../../../../graphql/operations/message";
-import toast from "react-hot-toast";
+import { SkeletonLoader } from "../../../common/SkeletonLoader";
 
 interface MessagesProps {
   userId: string;
@@ -15,34 +15,41 @@ interface MessagesProps {
 
 export const Messages = ({ userId, conversationId }: MessagesProps) => {
   //* useQuery
-  const { data, loading, error, subscribeToMore } = useQuery<
-    MessagesQueryOutput,
-    MessagesQueryInput
-  >(messageOperations.Queries.messages, {
-    variables: {
-      conversationId,
-    },
-    onError: ({ message }) => {
-      toast.error(message);
-    },
-  });
+  const {
+    data: messagesData,
+    loading: messagesLoading,
+    error: messagesError,
+    subscribeToMore,
+  } = useQuery<MessagesQueryOutput, MessagesQueryInput>(
+    messageOperations.Queries.messages,
+    {
+      variables: {
+        conversationId,
+      },
+      onError: ({ message }) => {
+        toast.error(message);
+      },
+    }
+  );
 
-  console.log("here are messages:", data?.messages);
+  console.log("here are messages:", messagesData?.messages);
 
+  if (messagesError) {
+    return null;
+  }
   return (
     <Flex direction="column" justify="flex-end" overflow="hidden">
-      {loading && (
-        <Stack>
-          {/* <SkeletonLoader /> */}
-          <span>Loading messages...</span>
+      {messagesLoading && (
+        <Stack spacing={3} px={4}>
+          <SkeletonLoader count={4} height="60px" />
         </Stack>
       )}
 
-      {data?.messages && (
+      {messagesData?.messages && (
         <Flex direction="column-reverse" overflowY="scroll" height="100%">
-          {data.messages.map((message) => (
+          {messagesData.messages.map((message) => (
             // <Message />
-            <div key={message.id}>message.body</div>
+            <div key={message.id}>{message.body}</div>
           ))}
         </Flex>
       )}
