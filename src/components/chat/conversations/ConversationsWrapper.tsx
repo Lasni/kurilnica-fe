@@ -1,13 +1,15 @@
 import { useQuery } from "@apollo/client";
 import { Box } from "@chakra-ui/react";
 import { Session } from "next-auth";
-import conversationOperations from "../../../graphql/operations/conversation";
-import ConversationsList from "./ConversationsList";
-import { ConversationsQueryOutput } from "../../../interfaces/graphqlInterfaces";
-import { ConversationPopulated } from "../../../../../backend/src/interfaces/graphqlInterfaces";
-import { useEffect } from "react";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
+import conversationOperations from "../../../graphql/operations/conversation";
+import {
+  ConversationCreatedSubscriptionData,
+  ConversationsQueryOutput,
+} from "../../../interfaces/graphqlInterfaces";
 import { SkeletonLoader } from "../../common/SkeletonLoader";
+import ConversationsList from "./ConversationsList";
 
 interface ConversationsWrapperProps {
   session: Session;
@@ -47,9 +49,7 @@ const ConversationsWrapper: React.FunctionComponent<
         {
           subscriptionData,
         }: {
-          subscriptionData: {
-            data: { conversationCreated: ConversationPopulated };
-          };
+          subscriptionData: ConversationCreatedSubscriptionData;
         }
       ) => {
         if (!subscriptionData.data) return prev;

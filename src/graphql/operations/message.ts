@@ -42,7 +42,7 @@ const messageOperations = {
   },
   Subscriptions: {
     messageSent: gql`
-      subscription MessageSent($conversationdId: String!) {
+      subscription MessageSent($conversationId: String!) {
         messageSent(conversationId: $conversationId) {
           ${messageFields}
         }

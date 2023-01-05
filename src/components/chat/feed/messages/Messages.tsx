@@ -1,8 +1,10 @@
 import { useQuery } from "@apollo/client";
 import { Flex, Stack } from "@chakra-ui/react";
+import { useEffect } from "react";
 import toast from "react-hot-toast";
 import messageOperations from "../../../../graphql/operations/message";
 import {
+  MessageSentSubscriptionData,
   MessagesQueryInput,
   MessagesQueryOutput,
 } from "../../../../interfaces/graphqlInterfaces";
@@ -32,7 +34,31 @@ export const Messages = ({ userId, conversationId }: MessagesProps) => {
     }
   );
 
-  console.log("here are messages:", messagesData?.messages);
+  const subscribeToNewMessages = (conversationId: string) => {
+    subscribeToMore({
+      document: messageOperations.Subscriptions.messageSent,
+      variables: { conversationId },
+      updateQuery: (
+        prev,
+        { subscriptionData }: { subscriptionData: MessageSentSubscriptionData }
+      ) => {
+        if (!subscriptionData) {
+          return prev;
+        }
+
+        const newMessage = subscriptionData.data.messageSent;
+
+        return Object.assign({}, prev, {
+          messages: [newMessage, ...prev.messages],
+        });
+      },
+    });
+  };
+  // execute subscription on-mount and when changing conversations
+  useEffect(() => {
+    subscribeToNewMessages(conversationId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversationId]);
 
   if (messagesError) {
     return null;

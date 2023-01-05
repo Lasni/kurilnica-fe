@@ -1,4 +1,5 @@
-import { Session, User } from "next-auth";
+import { Session } from "next-auth";
+import { messagePopulated } from "../../../backend/src/graphql/resolvers/message";
 import {
   ConversationPopulated,
   MessagePopulated,
@@ -52,6 +53,12 @@ export interface ConversationsQueryOutput {
   conversations: Array<ConversationPopulated>;
 }
 
+export interface ConversationCreatedSubscriptionData {
+  data: {
+    conversationCreated: ConversationPopulated;
+  };
+}
+
 //* MESSAGES
 export interface MessagesQueryOutput {
   messages: Array<MessagePopulated>;
@@ -72,5 +79,11 @@ export interface SendMessageMutationOutput {
   sendMessage: {
     success: boolean;
     error: string;
+  };
+}
+
+export interface MessageSentSubscriptionData {
+  data: {
+    messageSent: typeof messagePopulated;
   };
 }
