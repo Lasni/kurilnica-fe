@@ -8,14 +8,14 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { useState } from "react";
-import { ConversationPopulated } from "../../../../../backend/src/interfaces/graphqlInterfaces";
 import { formatRelative } from "date-fns";
 import { enUS } from "date-fns/locale";
-import { formatUsernames } from "../../../util/helperFunctions";
+import { useState } from "react";
+import { AiOutlineEdit } from "react-icons/ai";
 import { GoPrimitiveDot } from "react-icons/go";
 import { MdDeleteOutline } from "react-icons/md";
-import { AiOutlineEdit } from "react-icons/ai";
+import { ConversationPopulated } from "../../../../../backend/src/interfaces/graphqlInterfaces";
+import { formatUsernames } from "../../../util/helperFunctions";
 
 interface ConversationItemProps {
   conversation: ConversationPopulated;

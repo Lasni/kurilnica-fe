@@ -1,14 +1,16 @@
 import { useMutation } from "@apollo/client";
 import { Box, Input } from "@chakra-ui/react";
+import { ObjectID } from "bson";
 import { Session } from "next-auth";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import messageOperations from "../../../../graphql/operations/message";
 import {
+  MessagesQueryInput,
+  MessagesQueryOutput,
   SendMessageMutationInput,
   SendMessageMutationOutput,
 } from "../../../../interfaces/graphqlInterfaces";
-import { ObjectID } from "bson";
 
 interface MessageInputProps {
   session: Session;
@@ -18,7 +20,7 @@ interface MessageInputProps {
 const MessageInput = ({ session, conversationId }: MessageInputProps) => {
   const [messageBody, setMessageBody] = useState("");
   const {
-    user: { id: userId },
+    user: { id: userId, username },
   } = session;
 
   //* useMutation
@@ -41,9 +43,47 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
       const { data: sendMessageData } = await sendMessage({
         variables: {
           id: messageId,
-          conversationId: conversationId,
+          conversationId,
           senderId: userId,
           body: messageBody,
+        },
+        // (optimistic rendering) put the message in the apollo cache before the sendMessage promise resolves
+        optimisticResponse: {
+          sendMessage: {
+            success: true,
+            error: "",
+          },
+        },
+
+        // update callback when using optimistic rendering
+        update: (cache) => {
+          const existingMessagesData = cache.readQuery<MessagesQueryOutput>({
+            query: messageOperations.Queries.messages,
+            variables: { conversationId },
+          }) as MessagesQueryOutput;
+
+          cache.writeQuery<MessagesQueryOutput, MessagesQueryInput>({
+            query: messageOperations.Queries.messages,
+            variables: { conversationId },
+            data: {
+              ...existingMessagesData,
+              messages: [
+                {
+                  id: messageId,
+                  conversationId,
+                  senderId: userId,
+                  body: messageBody,
+                  sender: {
+                    id: userId,
+                    username: username,
+                  },
+                  createdAt: new Date(Date.now()),
+                  updatedAt: new Date(Date.now()),
+                },
+                ...existingMessagesData.messages,
+              ],
+            },
+          });
         },
       });
 
@@ -54,11 +94,11 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
         throw new Error("Failed to send message");
       }
       console.log("message sent data: ");
+      setMessageBody("");
     } catch (error: any) {
       console.log("onSendMessage error", error);
       toast.error(error.message);
     }
-    setMessageBody("");
   };
 
   return (

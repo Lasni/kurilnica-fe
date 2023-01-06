@@ -49,8 +49,12 @@ export const Messages = ({ userId, conversationId }: MessagesProps) => {
 
         const newMessage = subscriptionData.data.messageSent;
 
+        // Because using optimistic-rendering for the sender in MessageInput, the sender should not have the newMessage assigned (duplicate messages)
         return Object.assign({}, prev, {
-          messages: [newMessage, ...prev.messages],
+          messages:
+            newMessage?.sender?.id === userId
+              ? prev.messages
+              : [newMessage, ...prev.messages],
         });
       },
     });
@@ -77,8 +81,8 @@ export const Messages = ({ userId, conversationId }: MessagesProps) => {
           {messagesData.messages.map((message) => (
             <MessageItem
               message={message}
-              key={message.id}
-              sentByMe={message.sender.id === userId}
+              key={String(message?.createdAt)}
+              sentByMe={message?.sender?.id === userId}
             />
 
             // <div key={message.id}>{message.body}</div>
