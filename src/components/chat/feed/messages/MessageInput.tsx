@@ -58,6 +58,7 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
       console.log("onSendMessage error", error);
       toast.error(error.message);
     }
+    setMessageBody("");
   };
 
   return (

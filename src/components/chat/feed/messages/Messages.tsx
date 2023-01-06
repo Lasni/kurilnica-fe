@@ -9,6 +9,7 @@ import {
   MessagesQueryOutput,
 } from "../../../../interfaces/graphqlInterfaces";
 import { SkeletonLoader } from "../../../common/SkeletonLoader";
+import { MessageItem } from "./MessageItem";
 
 interface MessagesProps {
   userId: string;
@@ -74,8 +75,13 @@ export const Messages = ({ userId, conversationId }: MessagesProps) => {
       {messagesData?.messages && (
         <Flex direction="column-reverse" overflowY="scroll" height="100%">
           {messagesData.messages.map((message) => (
-            // <Message />
-            <div key={message.id}>{message.body}</div>
+            <MessageItem
+              message={message}
+              key={message.id}
+              sentByMe={message.sender.id === userId}
+            />
+
+            // <div key={message.id}>{message.body}</div>
           ))}
         </Flex>
       )}
