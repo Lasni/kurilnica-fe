@@ -48,6 +48,18 @@ export interface CreateConversationMutationInput {
   participantIds: Array<string>;
 }
 
+export interface MarkConversationAsReadMutationInput {
+  userId: string;
+  conversationId: string;
+}
+
+export interface MarkConversationAsReadMutationOutput {
+  markConversationAsRead: {
+    success: boolean;
+    error: string;
+  };
+}
+
 export interface ConversationsQueryOutput {
   conversations: Array<ConversationPopulated>;
 }

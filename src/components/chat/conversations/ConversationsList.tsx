@@ -1,15 +1,18 @@
 import { Box, Text } from "@chakra-ui/react";
 import { Session } from "next-auth";
-import React, { useState } from "react";
+import { useRouter } from "next/router";
+import { useState } from "react";
 import { ConversationPopulated } from "../../../../../backend/src/interfaces/graphqlInterfaces";
 import { ConversationItem } from "./ConversationItem";
 import { ConversationModal } from "./modal/ConversationModal";
-import { useRouter } from "next/router";
 
 interface ConversationsListProps {
   session: Session;
   conversations: Array<ConversationPopulated>;
-  onViewConversationCallback: (conversationId: string) => void;
+  onViewConversationCallback: (
+    conversationId: string,
+    hasSeenLatestMessage: boolean
+  ) => void;
 }
 
 const ConversationsList = ({
@@ -52,20 +55,34 @@ const ConversationsList = ({
         onClose={closeModalHandler}
         session={session}
       />
-      {conversations.map((conversation) => (
-        <div
-          key={conversation.id}
-          onClick={() => onViewConversationCallback(conversation.id)}
-        >
-          <ConversationItem
-            conversation={conversation}
-            isSelected={conversation.id === router.query.conversationId}
-            userId={userId}
-            hasSeenLatestMessage
-            selectedConversationId={conversation.id}
-          />
-        </div>
-      ))}
+      {conversations.map((conversation) => {
+        const participant = conversation.participants.find(
+          (p) => p.user.id === userId
+        );
+
+        if (participant === undefined) {
+          throw new TypeError("Participant is undefined");
+        }
+        return (
+          <div
+            key={conversation.id}
+            onClick={() =>
+              onViewConversationCallback(
+                conversation.id,
+                participant?.hasSeenLatestMessage
+              )
+            }
+          >
+            <ConversationItem
+              conversation={conversation}
+              isSelected={conversation.id === router.query.conversationId}
+              userId={userId}
+              hasSeenLatestMessage={participant.hasSeenLatestMessage}
+              selectedConversationId={conversation.id}
+            />
+          </div>
+        );
+      })}
     </Box>
   );
 };
