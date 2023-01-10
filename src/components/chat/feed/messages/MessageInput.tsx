@@ -19,13 +19,13 @@ interface MessageInputProps {
 
 const MessageInput = ({ session, conversationId }: MessageInputProps) => {
   const [messageBody, setMessageBody] = useState("");
-  const {
-    user: { id: userId, username },
-  } = session;
+  // const {
+  //   user: { id: userId, username },
+  // } = session;
 
   //* useMutation
   const [sendMessage] = useMutation<
-    SendMessageMutationOutput,
+    { sendMessage: boolean },
     SendMessageMutationInput
   >(messageOperations.Mutations.sendMessage, {
     onError: () => {
@@ -38,21 +38,23 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
 
     try {
       // 1. fire send message mutation
+      const {
+        user: { id: senderId },
+      } = session;
       const messageId = new ObjectID().toString();
 
-      const { data: sendMessageData } = await sendMessage({
-        variables: {
-          id: messageId,
-          conversationId,
-          senderId: userId,
-          body: messageBody,
-        },
+      const newMessage = {
+        id: messageId,
+        senderId,
+        conversationId,
+        body: messageBody,
+      };
+
+      const { data: sendMessageData, errors } = await sendMessage({
+        variables: { ...newMessage },
         // (optimistic rendering) put the message in the apollo cache before the sendMessage promise resolves
         optimisticResponse: {
-          sendMessage: {
-            success: true,
-            error: "",
-          },
+          sendMessage: true,
         },
 
         // update callback when using optimistic rendering
@@ -61,6 +63,8 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
             query: messageOperations.Queries.messages,
             variables: { conversationId },
           }) as MessagesQueryOutput;
+
+          // console.log("conversationId: ", conversationId);
 
           cache.writeQuery<MessagesQueryOutput, MessagesQueryInput>({
             query: messageOperations.Queries.messages,
@@ -71,11 +75,11 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
                 {
                   id: messageId,
                   conversationId,
-                  senderId: userId,
+                  senderId: session.user.id,
                   body: messageBody,
                   sender: {
-                    id: userId,
-                    username: username,
+                    id: session.user.id,
+                    username: session.user.username,
                   },
                   createdAt: new Date(Date.now()),
                   updatedAt: new Date(Date.now()),
@@ -87,13 +91,10 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
         },
       });
 
-      if (
-        !sendMessageData?.sendMessage.success ||
-        sendMessageData.sendMessage.error.length > 0
-      ) {
+      if (!sendMessageData?.sendMessage || errors) {
         throw new Error("Failed to send message");
       }
-      console.log("message sent data: ");
+      // console.log("message sent data: ");
       setMessageBody("");
     } catch (error: any) {
       console.log("onSendMessage error", error);

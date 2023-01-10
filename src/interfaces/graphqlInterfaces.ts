@@ -87,10 +87,11 @@ export interface SendMessageMutationInput {
 }
 
 export interface SendMessageMutationOutput {
-  sendMessage: {
-    success: boolean;
-    error: string;
-  };
+  sendMessage: boolean;
+  // sendMessage: {
+  //   success: boolean;
+  //   error: string;
+  // };
 }
 
 export interface MessageSentSubscriptionData {

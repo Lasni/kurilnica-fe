@@ -5,6 +5,8 @@ import Head from "next/head";
 import AuthComponent from "../components/auth/AuthComponent";
 import ChatComponent from "../components/chat/ChatComponent";
 
+//! Created branch temp01 because basic messaging was breaking after implementing 'mark conversations as read' functionality
+
 export default function Home() {
   const { data: session } = useSession();
 
