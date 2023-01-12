@@ -61,6 +61,10 @@ export const Messages = ({ userId, conversationId }: MessagesProps) => {
   };
   // execute subscription on-mount and when changing conversations
   useEffect(() => {
+    console.log(
+      "subscribeToNewMessages useEffect... conversationId is: ",
+      conversationId
+    );
     subscribeToNewMessages(conversationId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversationId]);

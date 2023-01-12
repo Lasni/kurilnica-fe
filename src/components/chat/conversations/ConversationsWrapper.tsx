@@ -3,16 +3,15 @@ import { Box } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { ParticipantPopulated } from "../../../../../backend/src/interfaces/graphqlInterfaces";
 import conversationOperations from "../../../graphql/operations/conversation";
 import {
   ConversationCreatedSubscriptionData,
   ConversationsQueryOutput,
   MarkConversationAsReadMutationInput,
-  MarkConversationAsReadMutationOutput,
 } from "../../../interfaces/graphqlInterfaces";
 import { SkeletonLoader } from "../../common/SkeletonLoader";
 import ConversationsList from "./ConversationsList";
-import { ParticipantPopulated } from "../../../../../backend/src/interfaces/graphqlInterfaces";
 
 interface ConversationsWrapperProps {
   session: Session;
@@ -43,7 +42,7 @@ const ConversationsWrapper: React.FunctionComponent<
 
   //* useMutation
   const [markConversationAsRead] = useMutation<
-    MarkConversationAsReadMutationOutput,
+    { markConversationAsRead: boolean },
     MarkConversationAsReadMutationInput
   >(conversationOperations.Mutations.markConversationAsRead);
 
@@ -51,26 +50,31 @@ const ConversationsWrapper: React.FunctionComponent<
     conversationId: string,
     hasSeenLatestMessage: boolean
   ) => {
+    console.log("onViewConversation fired...");
     // 1. push the new conversationId to router query params so that another data fetch is triggered for that conversation's messages
     router.push({ query: { conversationId } });
 
     // 2. mark conversation as read
     // If it's already read, return early
+    console.log("conversationId: ", conversationId);
     if (hasSeenLatestMessage) return;
 
     try {
+      console.log("entering try/catch...");
       await markConversationAsRead({
         variables: {
           userId,
           conversationId,
         },
         optimisticResponse: {
-          markConversationAsRead: {
-            success: true,
-            error: "",
-          },
+          markConversationAsRead: true,
+          // {
+          //   success: true,
+          //   error: "",
+          // },
         },
         update: (cache) => {
+          console.log("updating cache...");
           // Get conversation participants from the cache
           const participantsFragment = cache.readFragment<{
             participants: Array<ParticipantPopulated>;
@@ -91,20 +95,23 @@ const ConversationsWrapper: React.FunctionComponent<
 
           if (!participantsFragment) return;
 
-          const participantsCopy = [...participantsFragment.participants];
+          const participants = [...participantsFragment.participants];
 
-          const userParticipantIndex = participantsCopy.findIndex(
+          const userParticipantIndex = participants.findIndex(
             (p) => p.user.id === userId
           );
+          console.log("userParticipantIndex: ", userParticipantIndex);
 
           if (userParticipantIndex === -1) return;
 
+          const userParticipant = participants[userParticipantIndex];
+
           // Update participant to show latest message as read
-          const userParticipant = participantsCopy[userParticipantIndex];
-          participantsCopy[userParticipantIndex] = {
+          participants[userParticipantIndex] = {
             ...userParticipant,
             hasSeenLatestMessage: true,
           };
+          console.log("userParticipant: ", userParticipant);
 
           // Update cache
           cache.writeFragment({
@@ -115,7 +122,7 @@ const ConversationsWrapper: React.FunctionComponent<
               }
             `,
             data: {
-              participants: participantsCopy,
+              participants,
             },
           });
         },

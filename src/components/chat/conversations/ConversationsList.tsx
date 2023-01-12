@@ -63,6 +63,8 @@ const ConversationsList = ({
         if (participant === undefined) {
           throw new TypeError("Participant is undefined");
         }
+        console.log("conversation.id", conversation.id);
+        const conversationId = conversation.id;
         return (
           <div
             key={conversation.id}
@@ -74,11 +76,10 @@ const ConversationsList = ({
             }
           >
             <ConversationItem
-              conversation={conversation}
-              isSelected={conversation.id === router.query.conversationId}
               userId={userId}
+              conversation={conversation}
               hasSeenLatestMessage={participant.hasSeenLatestMessage}
-              selectedConversationId={conversation.id}
+              isSelected={conversation.id === router.query.conversationId}
             />
           </div>
         );

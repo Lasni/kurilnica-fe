@@ -19,9 +19,6 @@ interface MessageInputProps {
 
 const MessageInput = ({ session, conversationId }: MessageInputProps) => {
   const [messageBody, setMessageBody] = useState("");
-  // const {
-  //   user: { id: userId, username },
-  // } = session;
 
   //* useMutation
   const [sendMessage] = useMutation<
@@ -41,6 +38,8 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
       const {
         user: { id: senderId },
       } = session;
+      // console.log("senderId: ", senderId);
+
       const messageId = new ObjectID().toString();
 
       const newMessage = {
@@ -49,6 +48,9 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
         conversationId,
         body: messageBody,
       };
+
+      console.log("newMessage: ", newMessage);
+      console.log("sending to: ", newMessage.conversationId);
 
       const { data: sendMessageData, errors } = await sendMessage({
         variables: { ...newMessage },

@@ -21,7 +21,6 @@ interface ConversationItemProps {
   conversation: ConversationPopulated;
   isSelected: boolean;
   hasSeenLatestMessage: boolean;
-  selectedConversationId: string;
   userId: string;
 }
 const formatRelativeLocale = {
@@ -36,11 +35,10 @@ export const ConversationItem = ({
   isSelected,
   hasSeenLatestMessage,
   userId,
-  selectedConversationId,
 }: ConversationItemProps) => {
-  // console.log("ConversationItem: ", conversation);
+  console.log("ConversationItem: ", conversation);
   // console.log("isSelected: ", isSelected);
-  // console.log("conversation id: ", conversation.id);
+  console.log("conversation id: ", conversation.id);
   // console.log("conversation participants: ", conversation.participants);
 
   // console.log("conversationId", conversation.participants[0].conversationId);
@@ -53,7 +51,7 @@ export const ConversationItem = ({
   // console.log("updatedAt", conversation.participants[0].updatedAt);
   // console.log("user", conversation.participants[0].user);
   // console.log("userId", conversation.participants[0].userId);
-  console.log("______________________________________");
+  // console.log("______________________________________");
 
   let showMenu = false;
   const [menuOpen, setMenuOpen] = useState(false);
