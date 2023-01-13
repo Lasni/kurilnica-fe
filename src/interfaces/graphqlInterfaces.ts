@@ -60,6 +60,12 @@ export interface MarkConversationAsReadMutationOutput {
   };
 }
 
+export interface ConversationUpdatedSubscriptionOutput {
+  conversationUpdated: {
+    conversation: ConversationPopulated;
+  };
+}
+
 export interface ConversationsQueryOutput {
   conversations: Array<ConversationPopulated>;
 }

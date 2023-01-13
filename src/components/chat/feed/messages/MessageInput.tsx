@@ -66,7 +66,8 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
             variables: { conversationId },
           }) as MessagesQueryOutput;
 
-          // console.log("conversationId: ", conversationId);
+          console.log("conversationId: ", conversationId);
+          console.log("cache: ", cache);
 
           cache.writeQuery<MessagesQueryOutput, MessagesQueryInput>({
             query: messageOperations.Queries.messages,
