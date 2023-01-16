@@ -36,9 +36,9 @@ export const ConversationItem = ({
   hasSeenLatestMessage,
   userId,
 }: ConversationItemProps) => {
-  console.log("ConversationItem: ", conversation);
+  // console.log("ConversationItem: ", conversation);
   // console.log("isSelected: ", isSelected);
-  console.log("conversation id: ", conversation.id);
+  // console.log("conversation id: ", conversation.id);
   // console.log("conversation participants: ", conversation.participants);
 
   // console.log("conversationId", conversation.participants[0].conversationId);

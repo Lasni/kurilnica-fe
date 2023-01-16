@@ -35,6 +35,10 @@ const ConversationsList = ({
     setModalIsOpen(false);
   };
 
+  const sortedConversations = [...conversations].sort(
+    (a, b) => b.updatedAt.valueOf() - a.updatedAt.valueOf()
+  );
+
   return (
     <Box width={`100%`}>
       <Box
@@ -55,7 +59,7 @@ const ConversationsList = ({
         onClose={closeModalHandler}
         session={session}
       />
-      {conversations.map((conversation) => {
+      {sortedConversations.map((conversation) => {
         const participant = conversation.participants.find(
           (p) => p.user.id === userId
         );
@@ -63,7 +67,7 @@ const ConversationsList = ({
         if (participant === undefined) {
           throw new TypeError("Participant is undefined");
         }
-        console.log("conversation.id", conversation.id);
+        // console.log("conversation.id", conversation.id);
         const conversationId = conversation.id;
         return (
           <div
