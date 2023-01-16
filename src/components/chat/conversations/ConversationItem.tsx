@@ -22,6 +22,7 @@ interface ConversationItemProps {
   isSelected: boolean;
   hasSeenLatestMessage: boolean;
   userId: string;
+  onClick: () => void;
 }
 const formatRelativeLocale = {
   lastWeek: "eeee",
@@ -35,6 +36,7 @@ export const ConversationItem = ({
   isSelected,
   hasSeenLatestMessage,
   userId,
+  onClick,
 }: ConversationItemProps) => {
   // console.log("ConversationItem: ", conversation);
   // console.log("isSelected: ", isSelected);
@@ -53,8 +55,20 @@ export const ConversationItem = ({
   // console.log("userId", conversation.participants[0].userId);
   // console.log("______________________________________");
 
-  let showMenu = false;
+  // let showMenu = false;
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleRightClick = (event: React.MouseEvent) => {
+    console.log("handleRightClick");
+    if (event.type === "click") {
+      onClick();
+      console.log("onClick");
+    } else if (event.type === "contextmenu") {
+      console.log("contextmenu");
+      event.preventDefault();
+      setMenuOpen(true);
+    }
+  };
 
   return (
     <Stack
@@ -66,46 +80,50 @@ export const ConversationItem = ({
       borderRadius={4}
       bg={isSelected ? "whiteAlpha.200" : "none"}
       _hover={{ bg: "whiteAlpha.200" }}
-      // onClick={handleClick}
-      // onContextMenu={handleClick}
+      onClick={handleRightClick}
+      onContextMenu={handleRightClick}
       position="relative"
     >
-      {showMenu && (
-        <Menu isOpen={menuOpen} onClose={() => setMenuOpen(false)}>
-          <MenuList bg="#2d2d2d">
+      <Menu isOpen={menuOpen} onClose={() => setMenuOpen(false)}>
+        <MenuList>
+          <MenuItem
+            icon={<AiOutlineEdit fontSize={20} />}
+            // bg="#2d2d2d"
+            _hover={{ bg: "whiteAlpha.300" }}
+            onClick={(event) => {
+              event.stopPropagation();
+              // onEditConversation();
+            }}
+          >
+            Edit
+          </MenuItem>
+          {conversation.participants.length > 2 ? (
             <MenuItem
-              icon={<AiOutlineEdit fontSize={20} />}
+              // icon={<BiLogOut fontSize={20} />}
+              _hover={{ bg: "whiteAlpha.300" }}
               onClick={(event) => {
                 event.stopPropagation();
-                // onEditConversation();
+                // onLeaveConversation(conversation);
               }}
             >
-              Edit
+              Leave
             </MenuItem>
-            {conversation.participants.length > 2 ? (
-              <MenuItem
-                // icon={<BiLogOut fontSize={20} />}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  // onLeaveConversation(conversation);
-                }}
-              >
-                Leave
-              </MenuItem>
-            ) : (
-              <MenuItem
-                icon={<MdDeleteOutline fontSize={20} />}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  // onDeleteConversation(conversation.id);
-                }}
-              >
-                Delete
-              </MenuItem>
-            )}
-          </MenuList>
-        </Menu>
-      )}
+          ) : (
+            <MenuItem
+              icon={<MdDeleteOutline fontSize={20} />}
+              // bg="#2d2d2d"
+              _hover={{ bg: "whiteAlpha.300" }}
+              onClick={(event) => {
+                event.stopPropagation();
+                // onDeleteConversation(conversation.id);
+              }}
+            >
+              Delete
+            </MenuItem>
+          )}
+        </MenuList>
+      </Menu>
+
       <Flex position="absolute" left="-6px">
         {hasSeenLatestMessage === false && (
           <GoPrimitiveDot fontSize={18} color="#6B46C1" />

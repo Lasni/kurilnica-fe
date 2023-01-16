@@ -36,7 +36,7 @@ export const Messages = ({ userId, conversationId }: MessagesProps) => {
   );
 
   const subscribeToNewMessages = (conversationId: string) => {
-    subscribeToMore({
+    return subscribeToMore({
       document: messageOperations.Subscriptions.messageSent,
       variables: { conversationId },
       updateQuery: (
@@ -65,8 +65,9 @@ export const Messages = ({ userId, conversationId }: MessagesProps) => {
       "subscribeToNewMessages useEffect... conversationId is: ",
       conversationId
     );
-    subscribeToNewMessages(conversationId);
+    const unsubscribe = subscribeToNewMessages(conversationId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => unsubscribe();
   }, [conversationId]);
 
   if (messagesError) {

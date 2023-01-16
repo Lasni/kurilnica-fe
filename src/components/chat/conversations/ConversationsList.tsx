@@ -70,22 +70,19 @@ const ConversationsList = ({
         // console.log("conversation.id", conversation.id);
         const conversationId = conversation.id;
         return (
-          <div
+          <ConversationItem
             key={conversation.id}
+            userId={userId}
+            conversation={conversation}
+            hasSeenLatestMessage={participant.hasSeenLatestMessage}
+            isSelected={conversation.id === router.query.conversationId}
             onClick={() =>
               onViewConversationCallback(
                 conversation.id,
                 participant?.hasSeenLatestMessage
               )
             }
-          >
-            <ConversationItem
-              userId={userId}
-              conversation={conversation}
-              hasSeenLatestMessage={participant.hasSeenLatestMessage}
-              isSelected={conversation.id === router.query.conversationId}
-            />
-          </div>
+          />
         );
       })}
     </Box>
