@@ -66,6 +66,12 @@ export interface ConversationUpdatedSubscriptionOutput {
   };
 }
 
+export interface ConversationDeletedSubscriptionOutput {
+  conversationDeleted: {
+    id: string;
+  };
+}
+
 export interface ConversationsQueryOutput {
   conversations: Array<ConversationPopulated>;
 }

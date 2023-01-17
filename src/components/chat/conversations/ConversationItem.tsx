@@ -23,6 +23,7 @@ interface ConversationItemProps {
   hasSeenLatestMessage: boolean;
   userId: string;
   onClick: () => void;
+  onDeleteConversationCallback: (conversationId: string) => void;
 }
 const formatRelativeLocale = {
   lastWeek: "eeee",
@@ -37,6 +38,7 @@ export const ConversationItem = ({
   hasSeenLatestMessage,
   userId,
   onClick,
+  onDeleteConversationCallback,
 }: ConversationItemProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -97,7 +99,7 @@ export const ConversationItem = ({
               _hover={{ bg: "whiteAlpha.300" }}
               onClick={(event) => {
                 event.stopPropagation();
-                // onDeleteConversation(conversation.id);
+                onDeleteConversationCallback(conversation.id);
               }}
             >
               Delete
@@ -123,12 +125,13 @@ export const ConversationItem = ({
             {formatUsernames(conversation.participants, userId)}
           </Text>
           {conversation.latestMessage && (
-            <Box width="140%">
+            <Box width="100%">
               <Text
                 color="whiteAlpha.700"
                 whiteSpace="nowrap"
                 overflow="hidden"
                 textOverflow="ellipsis"
+                // maxWidth="150px"
               >
                 {conversation.latestMessage.body}
               </Text>

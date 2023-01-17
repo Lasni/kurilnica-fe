@@ -46,6 +46,11 @@ const conversationOperations = {
         # }
       }
     `,
+    deleteConversation: gql`
+      mutation DeleteConversation($conversationId: String!) {
+        deleteConversation(conversationId: $conversationId)
+      }
+    `,
   },
   Subscriptions: {
     conversationCreated: gql`
@@ -62,6 +67,14 @@ const conversationOperations = {
           conversation {
             ${conversationFields}
           }
+        }
+      }
+    `,
+
+    conversationDeleted: gql`
+      subscription ConversationDeleted {
+        conversationDeleted {
+          id
         }
       }
     `,

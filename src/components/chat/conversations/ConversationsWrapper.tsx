@@ -7,6 +7,7 @@ import { ParticipantPopulated } from "../../../../../backend/src/interfaces/grap
 import conversationOperations from "../../../graphql/operations/conversation";
 import {
   ConversationCreatedSubscriptionData,
+  ConversationDeletedSubscriptionOutput,
   ConversationsQueryOutput,
   MarkConversationAsReadMutationInput,
 } from "../../../interfaces/graphqlInterfaces";
@@ -47,6 +48,7 @@ const ConversationsWrapper: React.FunctionComponent<
     MarkConversationAsReadMutationInput
   >(conversationOperations.Mutations.markConversationAsRead);
 
+  // conversationUpdated subscription
   useSubscription<ConversationUpdatedSubscriptionOutput, null>(
     conversationOperations.Subscriptions.conversationUpdated,
     {
@@ -63,6 +65,41 @@ const ConversationsWrapper: React.FunctionComponent<
         if (conversation.id === conversationId) {
           onViewConversation(conversationId, false);
         }
+      },
+    }
+  );
+
+  // conversationDeleted subscription
+  useSubscription<ConversationDeletedSubscriptionOutput, null>(
+    conversationOperations.Subscriptions.conversationDeleted,
+    {
+      onData: ({ client, data }) => {
+        const { data: conversationDeletedSubscriptionData } = data;
+        if (!conversationDeletedSubscriptionData) return;
+
+        const existingConversationsCache =
+          client.readQuery<ConversationsQueryOutput>({
+            query: conversationOperations.Queries.conversations,
+          });
+        if (!existingConversationsCache) return;
+
+        const { conversations } = existingConversationsCache;
+        const {
+          conversationDeleted: { id: deletedConversationId },
+        } = conversationDeletedSubscriptionData;
+
+        const filteredConversations = conversations.filter(
+          (c) => c.id !== deletedConversationId
+        );
+
+        client.writeQuery<ConversationsQueryOutput>({
+          query: conversationOperations.Queries.conversations,
+          data: {
+            conversations: filteredConversations,
+          },
+        });
+
+        router.push("/");
       },
     }
   );
