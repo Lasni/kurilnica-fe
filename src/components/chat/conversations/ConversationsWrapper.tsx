@@ -53,8 +53,6 @@ const ConversationsWrapper: React.FunctionComponent<
       onData: ({ client, data }) => {
         const { data: conversationUpdatedSubscriptionData } = data;
 
-        // console.log("ON DATA FIRING: ", conversationUpdatedSubscriptionData);
-
         if (!conversationUpdatedSubscriptionData) return;
 
         const {
@@ -73,17 +71,14 @@ const ConversationsWrapper: React.FunctionComponent<
     conversationId: string,
     hasSeenLatestMessage: boolean
   ) => {
-    // console.log("onViewConversation fired...");
     // 1. push the new conversationId to router query params so that another data fetch is triggered for that conversation's messages
     router.push({ query: { conversationId } });
 
     // 2. mark conversation as read
     // If it's already read, return early
-    // console.log("conversationId: ", conversationId);
     if (hasSeenLatestMessage) return;
 
     try {
-      // console.log("entering try/catch...");
       await markConversationAsRead({
         variables: {
           userId,
@@ -97,7 +92,6 @@ const ConversationsWrapper: React.FunctionComponent<
           // },
         },
         update: (cache) => {
-          // console.log("updating cache...");
           // Get conversation participants from the cache
           const participantsFragment = cache.readFragment<{
             participants: Array<ParticipantPopulated>;
@@ -123,7 +117,6 @@ const ConversationsWrapper: React.FunctionComponent<
           const userParticipantIndex = participants.findIndex(
             (p) => p.user.id === userId
           );
-          // console.log("userParticipantIndex: ", userParticipantIndex);
 
           if (userParticipantIndex === -1) return;
 
@@ -134,7 +127,6 @@ const ConversationsWrapper: React.FunctionComponent<
             ...userParticipant,
             hasSeenLatestMessage: true,
           };
-          // console.log("userParticipant: ", userParticipant);
 
           // Update cache
           cache.writeFragment({
@@ -151,7 +143,7 @@ const ConversationsWrapper: React.FunctionComponent<
         },
       });
     } catch (error) {
-      console.log("onViewConversation error: ", error);
+      console.error("onViewConversation error: ", error);
     }
   };
 

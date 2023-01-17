@@ -20,9 +20,6 @@ export const MessageItem: React.FC<MessageItemProps> = ({
   message,
   sentByMe,
 }) => {
-  // console.log("messageItem: ", message);
-  // console.log("createdAt", message.createdAt);
-
   return (
     <Stack
       direction="row"

@@ -38,7 +38,6 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
       const {
         user: { id: senderId },
       } = session;
-      // console.log("senderId: ", senderId);
 
       const messageId = new ObjectID().toString();
 
@@ -48,9 +47,6 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
         conversationId,
         body: messageBody,
       };
-
-      console.log("newMessage: ", newMessage);
-      console.log("sending to: ", newMessage.conversationId);
 
       const { data: sendMessageData, errors } = await sendMessage({
         variables: { ...newMessage },
@@ -65,9 +61,6 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
             query: messageOperations.Queries.messages,
             variables: { conversationId },
           }) as MessagesQueryOutput;
-
-          console.log("conversationId: ", conversationId);
-          console.log("cache: ", cache);
 
           cache.writeQuery<MessagesQueryOutput, MessagesQueryInput>({
             query: messageOperations.Queries.messages,
@@ -97,10 +90,9 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
       if (!sendMessageData?.sendMessage || errors) {
         throw new Error("Failed to send message");
       }
-      // console.log("message sent data: ");
       setMessageBody("");
     } catch (error: any) {
-      console.log("onSendMessage error", error);
+      console.error("onSendMessage error", error);
       toast.error(error.message);
     }
   };

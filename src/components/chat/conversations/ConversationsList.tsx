@@ -27,13 +27,9 @@ const ConversationsList = ({
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
-  const openModalHandler = () => {
-    setModalIsOpen(true);
-  };
+  const openModalHandler = () => setModalIsOpen(true);
 
-  const closeModalHandler = () => {
-    setModalIsOpen(false);
-  };
+  const closeModalHandler = () => setModalIsOpen(false);
 
   const sortedConversations = [...conversations].sort(
     (a, b) => b.updatedAt.valueOf() - a.updatedAt.valueOf()
@@ -67,8 +63,7 @@ const ConversationsList = ({
         if (participant === undefined) {
           throw new TypeError("Participant is undefined");
         }
-        // console.log("conversation.id", conversation.id);
-        const conversationId = conversation.id;
+
         return (
           <ConversationItem
             key={conversation.id}
