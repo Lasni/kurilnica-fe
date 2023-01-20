@@ -9,7 +9,8 @@ import {
   ConversationCreatedSubscriptionData,
   ConversationDeletedSubscriptionOutput,
   ConversationsQueryOutput,
-  MarkConversationAsReadMutationInput,
+  MarkConversationAsReadUseMutationInput,
+  MarkConversationAsReadUseMutationOutput,
 } from "../../../interfaces/graphqlInterfaces";
 import { SkeletonLoader } from "../../common/SkeletonLoader";
 import ConversationsList from "./ConversationsList";
@@ -44,8 +45,8 @@ const ConversationsWrapper: React.FunctionComponent<
 
   //* useMutation
   const [markConversationAsRead] = useMutation<
-    { markConversationAsRead: boolean },
-    MarkConversationAsReadMutationInput
+    MarkConversationAsReadUseMutationOutput,
+    MarkConversationAsReadUseMutationInput
   >(conversationOperations.Mutations.markConversationAsRead);
 
   // conversationUpdated subscription
@@ -122,11 +123,10 @@ const ConversationsWrapper: React.FunctionComponent<
           conversationId,
         },
         optimisticResponse: {
-          markConversationAsRead: true,
-          // {
-          //   success: true,
-          //   error: "",
-          // },
+          markConversationAsRead: {
+            success: true,
+            error: "",
+          },
         },
         update: (cache) => {
           // Get conversation participants from the cache

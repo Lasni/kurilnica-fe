@@ -39,11 +39,13 @@ const conversationOperations = {
         $userId: String!
         $conversationId: String!
       ) {
-        markConversationAsRead(userId: $userId, conversationId: $conversationId)
-        # {
-        #   success
-        #   error
-        # }
+        markConversationAsRead(
+          userId: $userId
+          conversationId: $conversationId
+        ) {
+          success
+          error
+        }
       }
     `,
     deleteConversation: gql`

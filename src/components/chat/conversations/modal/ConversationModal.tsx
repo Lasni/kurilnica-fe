@@ -17,8 +17,8 @@ import toast from "react-hot-toast";
 import conversationOperations from "../../../../graphql/operations/conversation";
 import userOperations from "../../../../graphql/operations/user";
 import {
-  CreateConversationMutationInput,
-  CreateConversationMutationOutput,
+  CreateConversationUseMutationInput,
+  CreateConversationUseMutationOutput,
   SearchedUser,
   SearchUsersQueryInput,
   SearchUsersQueryOutput,
@@ -63,8 +63,8 @@ export const ConversationModal = ({
       error: createConversationError,
     },
   ] = useMutation<
-    CreateConversationMutationOutput,
-    CreateConversationMutationInput
+    CreateConversationUseMutationOutput,
+    CreateConversationUseMutationInput
   >(conversationOperations.Mutations.createConversation);
 
   const handleOnSearchUsers = (event: React.FormEvent) => {

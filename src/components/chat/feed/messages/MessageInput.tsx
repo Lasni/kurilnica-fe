@@ -8,8 +8,8 @@ import messageOperations from "../../../../graphql/operations/message";
 import {
   MessagesQueryInput,
   MessagesQueryOutput,
-  SendMessageMutationInput,
-  SendMessageMutationOutput,
+  SendMessageUseMutationInput,
+  SendMessageUseMutationOutput,
 } from "../../../../interfaces/graphqlInterfaces";
 
 interface MessageInputProps {
@@ -22,8 +22,8 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
 
   //* useMutation
   const [sendMessage] = useMutation<
-    { sendMessage: { success: boolean; error: string } },
-    SendMessageMutationInput
+    SendMessageUseMutationOutput,
+    SendMessageUseMutationInput
   >(messageOperations.Mutations.sendMessage, {
     onError: () => {
       throw new Error("Failed to send message (onError callback)");

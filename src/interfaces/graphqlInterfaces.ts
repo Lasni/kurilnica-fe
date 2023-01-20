@@ -11,14 +11,14 @@ export interface IAuthComponentProps {
   reloadSession: () => void;
 }
 
-export interface CreateUsernameMutationOutput {
+export interface CreateUsernameUseMutationOutput {
   createUsername: {
     success: boolean;
     error: string;
   };
 }
 
-export interface CreateUsernameMutationInput {
+export interface CreateUsernameUseMutationInput {
   username: string;
 }
 
@@ -38,22 +38,22 @@ export interface SearchUsersQueryOutput {
 
 //* CONVERSATIONS
 
-export interface CreateConversationMutationOutput {
+export interface CreateConversationUseMutationOutput {
   createConversation: {
     conversationId: string;
   };
 }
 
-export interface CreateConversationMutationInput {
+export interface CreateConversationUseMutationInput {
   participantIds: Array<string>;
 }
 
-export interface MarkConversationAsReadMutationInput {
+export interface MarkConversationAsReadUseMutationInput {
   userId: string;
   conversationId: string;
 }
 
-export interface MarkConversationAsReadMutationOutput {
+export interface MarkConversationAsReadUseMutationOutput {
   markConversationAsRead: {
     success: boolean;
     error: string;
@@ -83,29 +83,30 @@ export interface ConversationCreatedSubscriptionData {
 }
 
 //* MESSAGES
+
+// messages query
 export interface MessagesQueryOutput {
   messages: Array<MessagePopulated>;
 }
-
 export interface MessagesQueryInput {
   conversationId: string;
 }
 
-export interface SendMessageMutationInput {
+// sendMessage mutation
+export interface SendMessageUseMutationInput {
   id: string;
   conversationId: string;
   senderId: string;
   body: string;
 }
-
-export interface SendMessageMutationOutput {
-  sendMessage: boolean;
-  // sendMessage: {
-  //   success: boolean;
-  //   error: string;
-  // };
+export interface SendMessageUseMutationOutput {
+  sendMessage: {
+    success: boolean;
+    error: string;
+  };
 }
 
+// messageSent subscription
 export interface MessageSentSubscriptionData {
   data: {
     messageSent: MessagePopulated;

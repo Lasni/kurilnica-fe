@@ -5,8 +5,8 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import userOperations from "../../graphql/operations/user";
 import {
-  CreateUsernameMutationInput,
-  CreateUsernameMutationOutput,
+  CreateUsernameUseMutationInput,
+  CreateUsernameUseMutationOutput,
   IAuthComponentProps,
 } from "../../interfaces/graphqlInterfaces";
 
@@ -18,8 +18,8 @@ const AuthComponent: React.FC<IAuthComponentProps> = ({
 
   // createUsername mutation
   const [createUsername, { loading, error }] = useMutation<
-    CreateUsernameMutationOutput,
-    CreateUsernameMutationInput
+    CreateUsernameUseMutationOutput,
+    CreateUsernameUseMutationInput
   >(userOperations.Mutations.createUsername);
 
   const submitUsernameHandler = async () => {
