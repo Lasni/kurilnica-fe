@@ -22,7 +22,7 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
 
   //* useMutation
   const [sendMessage] = useMutation<
-    { sendMessage: boolean },
+    { sendMessage: { success: boolean; error: string } },
     SendMessageMutationInput
   >(messageOperations.Mutations.sendMessage, {
     onError: () => {
@@ -52,7 +52,10 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
         variables: { ...newMessage },
         // (optimistic rendering) put the message in the apollo cache before the sendMessage promise resolves
         optimisticResponse: {
-          sendMessage: true,
+          sendMessage: {
+            success: true,
+            error: "",
+          },
         },
 
         // update callback when using optimistic rendering
