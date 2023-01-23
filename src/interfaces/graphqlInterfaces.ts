@@ -38,44 +38,61 @@ export interface SearchUsersQueryOutput {
 
 //* CONVERSATIONS
 
+// create conversation
 export interface CreateConversationUseMutationOutput {
   createConversation: {
+    success: boolean;
+    error: string;
     conversationId: string;
   };
 }
-
 export interface CreateConversationUseMutationInput {
   participantIds: Array<string>;
 }
 
-export interface MarkConversationAsReadUseMutationInput {
-  userId: string;
-  conversationId: string;
-}
-
+// mark conversation as read
 export interface MarkConversationAsReadUseMutationOutput {
   markConversationAsRead: {
     success: boolean;
     error: string;
   };
 }
+export interface MarkConversationAsReadUseMutationInput {
+  userId: string;
+  conversationId: string;
+}
 
+// delete conversation
+export interface DeleteConversationUseMutationOutput {
+  deleteConversation: {
+    success: boolean;
+    error: string;
+  };
+}
+export interface DeleteConversationUseMutationInput {
+  conversationId: string;
+}
+
+// conversation updated subscription
 export interface ConversationUpdatedSubscriptionOutput {
   conversationUpdated: {
     conversation: ConversationPopulated;
   };
 }
 
+// conversation deleted subscription
 export interface ConversationDeletedSubscriptionOutput {
   conversationDeleted: {
     id: string;
   };
 }
 
+// conversations query
 export interface ConversationsQueryOutput {
   conversations: Array<ConversationPopulated>;
 }
 
+// conversations subscribeToMore subscription
 export interface ConversationCreatedSubscriptionData {
   data: {
     conversationCreated: ConversationPopulated;

@@ -9,6 +9,10 @@ import { useMutation } from "@apollo/client";
 import conversationOperations from "../../../graphql/operations/conversation";
 import toast from "react-hot-toast";
 import { signOut } from "next-auth/react";
+import {
+  DeleteConversationUseMutationInput,
+  DeleteConversationUseMutationOutput,
+} from "../../../interfaces/graphqlInterfaces";
 
 interface ConversationsListProps {
   session: Session;
@@ -29,10 +33,10 @@ const ConversationsList = ({
     user: { id: userId },
   } = session;
 
-  const [deleteConversation] = useMutation<{
-    deleteConversation: boolean;
-    conversationId: string;
-  }>(conversationOperations.Mutations.deleteConversation);
+  const [deleteConversation] = useMutation<
+    DeleteConversationUseMutationOutput,
+    DeleteConversationUseMutationInput
+  >(conversationOperations.Mutations.deleteConversation);
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
 

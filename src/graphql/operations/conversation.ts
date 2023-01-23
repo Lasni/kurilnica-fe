@@ -30,6 +30,8 @@ const conversationOperations = {
     createConversation: gql`
       mutation CreateConversation($participantIds: [String]!) {
         createConversation(participantIds: $participantIds) {
+          success
+          error
           conversationId
         }
       }
@@ -50,7 +52,10 @@ const conversationOperations = {
     `,
     deleteConversation: gql`
       mutation DeleteConversation($conversationId: String!) {
-        deleteConversation(conversationId: $conversationId)
+        deleteConversation(conversationId: $conversationId) {
+          success
+          error
+        }
       }
     `,
   },

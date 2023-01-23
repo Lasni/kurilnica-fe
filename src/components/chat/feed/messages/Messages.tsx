@@ -41,7 +41,11 @@ export const Messages = ({ userId, conversationId }: MessagesProps) => {
       variables: { conversationId },
       updateQuery: (
         prev,
-        { subscriptionData }: { subscriptionData: MessageSentSubscriptionData }
+        {
+          subscriptionData,
+        }: {
+          subscriptionData: MessageSentSubscriptionData;
+        }
       ) => {
         if (!subscriptionData) {
           return prev;
