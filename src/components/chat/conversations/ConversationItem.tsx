@@ -43,12 +43,11 @@ export const ConversationItem = ({
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleRightClick = (event: React.MouseEvent) => {
-    console.log("handleRightClick");
     if (event.type === "click") {
       onClick();
       console.log("onClick");
     } else if (event.type === "contextmenu") {
-      console.log("contextmenu");
+      console.log("rightClick");
       event.preventDefault();
       setMenuOpen(true);
     }

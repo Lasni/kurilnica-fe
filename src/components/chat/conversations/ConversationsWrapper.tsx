@@ -3,7 +3,10 @@ import { Box } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { ParticipantPopulated } from "../../../../../backend/src/interfaces/graphqlInterfaces";
+import {
+  ParticipantPopulated,
+  MessagePopulated,
+} from "../../../../../backend/src/interfaces/graphqlInterfaces";
 import conversationOperations from "../../../graphql/operations/conversation";
 import {
   ConversationCreatedSubscriptionData,
@@ -14,7 +17,11 @@ import {
 } from "../../../interfaces/graphqlInterfaces";
 import { SkeletonLoader } from "../../common/SkeletonLoader";
 import ConversationsList from "./ConversationsList";
-import { ConversationUpdatedSubscriptionOutput } from "../../../interfaces/graphqlInterfaces";
+import {
+  ConversationUpdatedSubscriptionOutput,
+  MessagesQueryOutput,
+} from "../../../interfaces/graphqlInterfaces";
+import messageOperations from "../../../graphql/operations/message";
 
 interface ConversationsWrapperProps {
   session: Session;
@@ -59,12 +66,54 @@ const ConversationsWrapper: React.FunctionComponent<
         if (!conversationUpdatedSubscriptionData) return;
 
         const {
-          conversationUpdated: { conversation },
+          conversationUpdated: { conversation: updatedConversation },
         } = conversationUpdatedSubscriptionData;
 
+        const { id: updatedConversationId, latestMessage } =
+          updatedConversation;
+
+        if (!latestMessage) {
+          console.error("No latestMessage");
+          return;
+        }
+
         // if already viewing the conversation, make it 'seen'
-        if (conversation.id === conversationId) {
+        if (updatedConversationId === conversationId) {
           onViewConversation(conversationId, false);
+          return;
+        }
+
+        // read cache for existing messages
+        const existingMessagesCache = client.readQuery<MessagesQueryOutput>({
+          query: messageOperations.Queries.messages,
+          variables: { conversationId: updatedConversationId },
+        });
+
+        if (!existingMessagesCache) {
+          console.error("no existing messages cache");
+          return;
+        }
+
+        // check if existing messages already have the latest message (they should not)
+        const hasLatestMessage = existingMessagesCache?.messages.find(
+          (m) => m.id === latestMessage?.id
+        );
+
+        /**
+         * If nothing was found (undefined is returned) then update the query.
+         *
+         * Note: query update is necessary because a re-fetch won't happen
+         * when you view a conversation you've already viewed, due to caching
+         */
+        if (typeof hasLatestMessage === "undefined") {
+          client.writeQuery<MessagesQueryOutput>({
+            query: messageOperations.Queries.messages,
+            variables: { conversationId: updatedConversationId },
+            data: {
+              ...existingMessagesCache,
+              messages: [latestMessage, ...existingMessagesCache?.messages],
+            },
+          });
         }
       },
     }
@@ -109,12 +158,18 @@ const ConversationsWrapper: React.FunctionComponent<
     conversationId: string,
     hasSeenLatestMessage: boolean
   ) => {
+    // console.log(
+    //   `conversationId: ${conversationId}\nhasSeenLatestMessage: ${hasSeenLatestMessage}`
+    // );
     // 1. push the new conversationId to router query params so that another data fetch is triggered for that conversation's messages
     router.push({ query: { conversationId } });
 
     // 2. mark conversation as read
     // If it's already read, return early
-    if (hasSeenLatestMessage) return;
+    if (hasSeenLatestMessage) {
+      // console.log("hasSeenLatestMessage");
+      return;
+    }
 
     try {
       await markConversationAsRead({

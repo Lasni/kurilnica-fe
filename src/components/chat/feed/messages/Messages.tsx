@@ -52,6 +52,7 @@ export const Messages = ({ userId, conversationId }: MessagesProps) => {
         }
 
         const newMessage = subscriptionData.data.messageSent;
+        console.log("newMessage: ", newMessage);
 
         // Because using optimistic-rendering for the sender in MessageInput, the sender should not have the newMessage assigned (duplicate messages)
         return Object.assign({}, prev, {
@@ -65,6 +66,7 @@ export const Messages = ({ userId, conversationId }: MessagesProps) => {
   };
   // execute subscription on-mount and when changing conversations
   useEffect(() => {
+    console.log("conversationId: ", conversationId);
     const unsubscribe = subscribeToNewMessages(conversationId);
     return () => unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
