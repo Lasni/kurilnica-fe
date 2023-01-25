@@ -32,7 +32,6 @@ export interface SearchedUser {
 }
 
 export interface SearchUsersQueryOutput {
-  // searchedUsers: Array<Pick<User, "id" | "username">>;
   searchUsers: Array<SearchedUser>;
 }
 
