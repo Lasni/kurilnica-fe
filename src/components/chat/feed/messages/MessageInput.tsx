@@ -34,7 +34,6 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
     event.preventDefault();
 
     try {
-      // 1. fire send message mutation
       const {
         user: { id: senderId },
       } = session;

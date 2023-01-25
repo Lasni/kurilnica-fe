@@ -52,7 +52,6 @@ export const Messages = ({ userId, conversationId }: MessagesProps) => {
         }
 
         const newMessage = subscriptionData.data.messageSent;
-        console.log("newMessage: ", newMessage);
 
         // Because using optimistic-rendering for the sender in MessageInput, the sender should not have the newMessage assigned (duplicate messages)
         return Object.assign({}, prev, {

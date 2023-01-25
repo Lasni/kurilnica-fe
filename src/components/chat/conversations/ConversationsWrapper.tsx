@@ -89,10 +89,7 @@ const ConversationsWrapper: React.FunctionComponent<
           variables: { conversationId: updatedConversationId },
         });
 
-        if (!existingMessagesCache) {
-          console.error("no existing messages cache");
-          return;
-        }
+        if (!existingMessagesCache) return;
 
         // check if existing messages already have the latest message (they should not)
         const hasLatestMessage = existingMessagesCache?.messages.find(
