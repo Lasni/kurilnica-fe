@@ -4,40 +4,39 @@ import {
   MessagePopulated,
 } from "../../../backend/src/interfaces/graphqlInterfaces";
 
-//* USERS
+//* USER
 
 export interface IAuthComponentProps {
   session: Session | null;
   reloadSession: () => void;
 }
 
+// createUsername mutation
 export interface CreateUsernameUseMutationOutput {
   createUsername: {
     success: boolean;
     error: string;
   };
 }
-
 export interface CreateUsernameUseMutationInput {
   username: string;
 }
 
+// searchUsers query
+export interface SearchUsersQueryOutput {
+  searchUsers: Array<SearchedUser>;
+}
 export interface SearchUsersQueryInput {
   username: string;
 }
-
 export interface SearchedUser {
   id: string;
   username: string;
 }
 
-export interface SearchUsersQueryOutput {
-  searchUsers: Array<SearchedUser>;
-}
+//* CONVERSATION
 
-//* CONVERSATIONS
-
-// create conversation
+// createConversation mutation
 export interface CreateConversationUseMutationOutput {
   createConversation: {
     success: boolean;
@@ -49,7 +48,7 @@ export interface CreateConversationUseMutationInput {
   participantIds: Array<string>;
 }
 
-// mark conversation as read
+// markConversationAsRead mutation
 export interface MarkConversationAsReadUseMutationOutput {
   markConversationAsRead: {
     success: boolean;
@@ -61,7 +60,7 @@ export interface MarkConversationAsReadUseMutationInput {
   conversationId: string;
 }
 
-// delete conversation
+// deleteConversation
 export interface DeleteConversationUseMutationOutput {
   deleteConversation: {
     success: boolean;
@@ -72,14 +71,14 @@ export interface DeleteConversationUseMutationInput {
   conversationId: string;
 }
 
-// conversation updated subscription
+// conversationUpdated subscription
 export interface ConversationUpdatedSubscriptionOutput {
   conversationUpdated: {
     conversation: ConversationPopulated;
   };
 }
 
-// conversation deleted subscription
+// conversationDeleted subscription
 export interface ConversationDeletedSubscriptionOutput {
   conversationDeleted: {
     id: string;
@@ -98,7 +97,7 @@ export interface ConversationCreatedSubscriptionData {
   };
 }
 
-//* MESSAGES
+//* MESSAGE
 
 // messages query
 export interface MessagesQueryOutput {

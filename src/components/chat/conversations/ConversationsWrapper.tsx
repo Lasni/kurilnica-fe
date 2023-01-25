@@ -4,7 +4,7 @@ import { Session } from "next-auth";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import {
-  ParticipantPopulated,
+  ConversationParticipantPopulated,
   MessagePopulated,
 } from "../../../../../backend/src/interfaces/graphqlInterfaces";
 import conversationOperations from "../../../graphql/operations/conversation";
@@ -183,7 +183,7 @@ const ConversationsWrapper: React.FunctionComponent<
         update: (cache) => {
           // Get conversation participants from the cache
           const participantsFragment = cache.readFragment<{
-            participants: Array<ParticipantPopulated>;
+            participants: Array<ConversationParticipantPopulated>;
           }>({
             id: `Conversation:${conversationId}`,
             fragment: gql`

@@ -1,4 +1,4 @@
-import { ParticipantPopulated } from "../../../backend/src/interfaces/graphqlInterfaces";
+import { ConversationParticipantPopulated } from "../../../backend/src/interfaces/graphqlInterfaces";
 
 /**
  *
@@ -7,7 +7,7 @@ import { ParticipantPopulated } from "../../../backend/src/interfaces/graphqlInt
  * @returns a string of all comma-separated usernames, excluding my own
  */
 export const formatUsernames = (
-  participants: Array<ParticipantPopulated>,
+  participants: Array<ConversationParticipantPopulated>,
   myUserId: string
 ): string => {
   const usernamesExceptMe = participants
