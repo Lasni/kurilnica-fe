@@ -12,6 +12,8 @@ import { signOut } from "next-auth/react";
 import {
   DeleteConversationUseMutationInput,
   DeleteConversationUseMutationOutput,
+  LeaveConversationUseMutationInput,
+  LeaveConversationUseMutationOutput,
 } from "../../../interfaces/graphqlInterfaces";
 
 interface ConversationsListProps {
@@ -37,6 +39,11 @@ const ConversationsList = ({
     DeleteConversationUseMutationOutput,
     DeleteConversationUseMutationInput
   >(conversationOperations.Mutations.deleteConversation);
+
+  const [leaveConversation] = useMutation<
+    LeaveConversationUseMutationOutput,
+    LeaveConversationUseMutationInput
+  >(conversationOperations.Mutations.leaveConversation);
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -69,6 +76,32 @@ const ConversationsList = ({
       console.error("onDeleteConversation error: ", error);
     }
   };
+
+  async function onLeaveConversation(conversation: ConversationPopulated) {
+    // console.log("onLeaveConversation id: ", conversation.id);
+    // console.log("conversation participants: ", conversation.participants);
+    // console.log("userId: ", userId);
+    const participantsIdsToUpdate = conversation.participants
+      .filter((p) => p.user.id !== userId)
+      .map((p) => p.user.id);
+
+    try {
+      const { data: leaveConversationData, errors: leaveConversationErrors } =
+        await leaveConversation({
+          variables: {
+            conversationId: conversation.id,
+            conversationParticipantsIds: participantsIdsToUpdate,
+          },
+        });
+
+      if (!leaveConversationData || leaveConversationErrors) {
+        throw new Error("Failed to leave the conversation");
+      }
+    } catch (error: any) {
+      console.error("onLeaveConversation error: ", error);
+      toast.error(error?.message);
+    }
+  }
 
   const sortedConversations = [...conversations].sort(
     (a, b) => b.updatedAt.valueOf() - a.updatedAt.valueOf()
@@ -122,6 +155,7 @@ const ConversationsList = ({
               )
             }
             onDeleteConversationCallback={onDeleteConversation}
+            onLeaveConversationCallback={onLeaveConversation}
           />
         );
       })}

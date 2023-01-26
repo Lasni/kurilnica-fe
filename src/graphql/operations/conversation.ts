@@ -58,6 +58,20 @@ const conversationOperations = {
         }
       }
     `,
+    leaveConversation: gql`
+      mutation LeaveConversation(
+        $conversationId: String!
+        $conversationParticipantsIds: [String]!
+      ) {
+        leaveConversation(
+          conversationId: $conversationId
+          conversationParticipantsIds: $conversationParticipantsIds
+        ) {
+          success
+          error
+        }
+      }
+    `,
   },
   Subscriptions: {
     conversationCreated: gql`

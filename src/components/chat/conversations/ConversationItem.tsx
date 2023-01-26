@@ -14,6 +14,7 @@ import { useState } from "react";
 import { AiOutlineEdit } from "react-icons/ai";
 import { GoPrimitiveDot } from "react-icons/go";
 import { MdDeleteOutline } from "react-icons/md";
+import { BiLogOut } from "react-icons/bi";
 import { ConversationPopulated } from "../../../../../backend/src/interfaces/graphqlInterfaces";
 import { formatUsernames } from "../../../util/helperFunctions";
 
@@ -24,6 +25,7 @@ interface ConversationItemProps {
   userId: string;
   onClick: () => void;
   onDeleteConversationCallback: (conversationId: string) => void;
+  onLeaveConversationCallback: (conversation: ConversationPopulated) => void;
 }
 const formatRelativeLocale = {
   lastWeek: "eeee",
@@ -39,6 +41,7 @@ export const ConversationItem = ({
   userId,
   onClick,
   onDeleteConversationCallback,
+  onLeaveConversationCallback,
 }: ConversationItemProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -82,11 +85,11 @@ export const ConversationItem = ({
           </MenuItem>
           {conversation.participants.length > 2 ? (
             <MenuItem
-              // icon={<BiLogOut fontSize={20} />}
+              icon={<BiLogOut fontSize={20} />}
               _hover={{ bg: "whiteAlpha.300" }}
               onClick={(event) => {
                 event.stopPropagation();
-                // onLeaveConversation(conversation);
+                onLeaveConversationCallback(conversation);
               }}
             >
               Leave

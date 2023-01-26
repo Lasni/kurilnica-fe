@@ -60,7 +60,7 @@ export interface MarkConversationAsReadUseMutationInput {
   conversationId: string;
 }
 
-// deleteConversation
+// deleteConversation mutation
 export interface DeleteConversationUseMutationOutput {
   deleteConversation: {
     success: boolean;
@@ -69,6 +69,18 @@ export interface DeleteConversationUseMutationOutput {
 }
 export interface DeleteConversationUseMutationInput {
   conversationId: string;
+}
+
+// leaveConversation mutation
+export interface LeaveConversationUseMutationOutput {
+  leaveConversation: {
+    success: boolean;
+    error: string;
+  };
+}
+export interface LeaveConversationUseMutationInput {
+  conversationId: string;
+  conversationParticipantsIds: Array<string>;
 }
 
 // conversationUpdated subscription
