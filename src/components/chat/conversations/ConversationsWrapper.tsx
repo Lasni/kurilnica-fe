@@ -3,25 +3,20 @@ import { Box } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import {
-  ConversationParticipantPopulated,
-  MessagePopulated,
-} from "../../../../../backend/src/interfaces/graphqlInterfaces";
+import { ConversationParticipantPopulated } from "../../../../../backend/src/interfaces/graphqlInterfaces";
 import conversationOperations from "../../../graphql/operations/conversation";
+import messageOperations from "../../../graphql/operations/message";
 import {
   ConversationCreatedSubscriptionData,
   ConversationDeletedSubscriptionOutput,
   ConversationsQueryOutput,
+  ConversationUpdatedSubscriptionOutput,
   MarkConversationAsReadUseMutationInput,
   MarkConversationAsReadUseMutationOutput,
+  MessagesQueryOutput,
 } from "../../../interfaces/graphqlInterfaces";
 import { SkeletonLoader } from "../../common/SkeletonLoader";
 import ConversationsList from "./ConversationsList";
-import {
-  ConversationUpdatedSubscriptionOutput,
-  MessagesQueryOutput,
-} from "../../../interfaces/graphqlInterfaces";
-import messageOperations from "../../../graphql/operations/message";
 
 interface ConversationsWrapperProps {
   session: Session;
@@ -66,24 +61,69 @@ const ConversationsWrapper: React.FunctionComponent<
         if (!conversationUpdatedSubscriptionData) return;
 
         const {
-          conversationUpdated: { conversation: updatedConversation },
+          conversationUpdated: {
+            conversation: updatedConversation,
+            removedUserIds,
+          },
         } = conversationUpdatedSubscriptionData;
 
         const { id: updatedConversationId, latestMessage } =
           updatedConversation;
 
-        if (!latestMessage) {
-          console.error("No latestMessage");
-          return;
+        console.log("updatedConversation: ", updatedConversation);
+
+        // console.log("removedUserIds from ConversationsWrapper", removedUserIds);
+
+        /**
+         * Check if user is being removed
+         */
+        if (removedUserIds && removedUserIds.length > 0) {
+          const isBeingRemoved = removedUserIds.find((id) => id === userId);
+          if (isBeingRemoved) {
+            const conversationsData =
+              client.readQuery<ConversationsQueryOutput>({
+                query: conversationOperations.Queries.conversations,
+              });
+
+            console.log("conversationsData", conversationsData);
+            if (!conversationsData) return;
+
+            console.log("updatedConversationsId: ", updatedConversationId);
+            const filteredConversations =
+              conversationsData.conversations.filter(
+                (c) => c.id !== updatedConversationId
+              );
+            // console.log("filteredConversations", filteredConversations);
+
+            client.writeQuery<ConversationsQueryOutput>({
+              query: conversationOperations.Queries.conversations,
+              data: {
+                conversations: filteredConversations,
+              },
+            });
+
+            // Redirect to home after cache updates
+            if (conversationId === updatedConversationId) {
+              console.log("conversationId === updatedConversationId");
+              router.replace("");
+            }
+
+            // Early return - no more updates required
+            return;
+          }
         }
 
-        // if already viewing the conversation, make it 'seen'
+        /**
+         * Already viewing conversation where
+         * new message is received; no need
+         * to manually update cache due to
+         * message subscription
+         */
         if (updatedConversationId === conversationId) {
           onViewConversation(conversationId, false);
           return;
         }
 
-        // read cache for existing messages
         const existingMessagesCache = client.readQuery<MessagesQueryOutput>({
           query: messageOperations.Queries.messages,
           variables: { conversationId: updatedConversationId },
@@ -91,7 +131,10 @@ const ConversationsWrapper: React.FunctionComponent<
 
         if (!existingMessagesCache) return;
 
-        // check if existing messages already have the latest message (they should not)
+        /**
+         * Check if lastest message is already present
+         * in the message query
+         */
         const hasLatestMessage = existingMessagesCache?.messages.find(
           (m) => m.id === latestMessage?.id
         );
@@ -102,7 +145,7 @@ const ConversationsWrapper: React.FunctionComponent<
          * Note: query update is necessary because a re-fetch won't happen
          * when you view a conversation you've already viewed, due to caching
          */
-        if (typeof hasLatestMessage === "undefined") {
+        if (typeof hasLatestMessage === "undefined" && latestMessage) {
           client.writeQuery<MessagesQueryOutput>({
             query: messageOperations.Queries.messages,
             variables: { conversationId: updatedConversationId },
@@ -155,16 +198,11 @@ const ConversationsWrapper: React.FunctionComponent<
     conversationId: string,
     hasSeenLatestMessage: boolean
   ) => {
-    // console.log(
-    //   `conversationId: ${conversationId}\nhasSeenLatestMessage: ${hasSeenLatestMessage}`
-    // );
     // 1. push the new conversationId to router query params so that another data fetch is triggered for that conversation's messages
     router.push({ query: { conversationId } });
 
-    // 2. mark conversation as read
     // If it's already read, return early
     if (hasSeenLatestMessage) {
-      // console.log("hasSeenLatestMessage");
       return;
     }
 

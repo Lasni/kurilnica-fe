@@ -87,6 +87,7 @@ export interface LeaveConversationUseMutationInput {
 export interface ConversationUpdatedSubscriptionOutput {
   conversationUpdated: {
     conversation: ConversationPopulated;
+    removedUserIds: Array<string>;
   };
 }
 

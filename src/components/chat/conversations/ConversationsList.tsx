@@ -78,9 +78,6 @@ const ConversationsList = ({
   };
 
   async function onLeaveConversation(conversation: ConversationPopulated) {
-    // console.log("onLeaveConversation id: ", conversation.id);
-    // console.log("conversation participants: ", conversation.participants);
-    // console.log("userId: ", userId);
     const participantsIdsToUpdate = conversation.participants
       .filter((p) => p.user.id !== userId)
       .map((p) => p.user.id);
@@ -93,10 +90,12 @@ const ConversationsList = ({
             conversationParticipantsIds: participantsIdsToUpdate,
           },
         });
+      console.log("variables: conversationId: ", conversation.id);
 
       if (!leaveConversationData || leaveConversationErrors) {
         throw new Error("Failed to leave the conversation");
       }
+      // router.push("/");
     } catch (error: any) {
       console.error("onLeaveConversation error: ", error);
       toast.error(error?.message);
