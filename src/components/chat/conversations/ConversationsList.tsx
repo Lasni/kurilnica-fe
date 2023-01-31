@@ -1,20 +1,20 @@
+import { useMutation } from "@apollo/client";
 import { Box, Button, Text } from "@chakra-ui/react";
 import { Session } from "next-auth";
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { ConversationPopulated } from "../../../../../backend/src/interfaces/graphqlInterfaces";
-import { ConversationItem } from "./ConversationItem";
-import { ConversationModal } from "./modal/ConversationModal";
-import { useMutation } from "@apollo/client";
-import conversationOperations from "../../../graphql/operations/conversation";
 import toast from "react-hot-toast";
-import { signOut } from "next-auth/react";
+import { ConversationPopulated } from "../../../../../backend/src/interfaces/graphqlInterfaces";
+import conversationOperations from "../../../graphql/operations/conversation";
 import {
   DeleteConversationUseMutationInput,
   DeleteConversationUseMutationOutput,
   LeaveConversationUseMutationInput,
   LeaveConversationUseMutationOutput,
 } from "../../../interfaces/graphqlInterfaces";
+import { ConversationItem } from "./ConversationItem";
+import { ConversationModal } from "./modal/ConversationModal";
 
 interface ConversationsListProps {
   session: Session;
@@ -90,12 +90,10 @@ const ConversationsList = ({
             conversationParticipantsIds: participantsIdsToUpdate,
           },
         });
-      console.log("variables: conversationId: ", conversation.id);
 
       if (!leaveConversationData || leaveConversationErrors) {
         throw new Error("Failed to leave the conversation");
       }
-      // router.push("/");
     } catch (error: any) {
       console.error("onLeaveConversation error: ", error);
       toast.error(error?.message);

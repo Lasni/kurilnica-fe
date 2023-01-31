@@ -70,10 +70,6 @@ const ConversationsWrapper: React.FunctionComponent<
         const { id: updatedConversationId, latestMessage } =
           updatedConversation;
 
-        console.log("updatedConversation: ", updatedConversation);
-
-        // console.log("removedUserIds from ConversationsWrapper", removedUserIds);
-
         /**
          * Check if user is being removed
          */
@@ -85,15 +81,12 @@ const ConversationsWrapper: React.FunctionComponent<
                 query: conversationOperations.Queries.conversations,
               });
 
-            console.log("conversationsData", conversationsData);
             if (!conversationsData) return;
 
-            console.log("updatedConversationsId: ", updatedConversationId);
             const filteredConversations =
               conversationsData.conversations.filter(
                 (c) => c.id !== updatedConversationId
               );
-            // console.log("filteredConversations", filteredConversations);
 
             client.writeQuery<ConversationsQueryOutput>({
               query: conversationOperations.Queries.conversations,
@@ -104,7 +97,6 @@ const ConversationsWrapper: React.FunctionComponent<
 
             // Redirect to home after cache updates
             if (conversationId === updatedConversationId) {
-              console.log("conversationId === updatedConversationId");
               router.replace("");
             }
 
