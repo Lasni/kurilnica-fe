@@ -92,9 +92,15 @@ export const ConversationModal = ({
           .map((p) => p.user.username)
       : null;
 
-    console.log("usernamesInCurrentConvo", usernamesInCurrentConvo);
+    if (username.length < 2) {
+      toast.error("Type at least 2 characters");
+      return;
+    }
 
-    if (!usernamesInCurrentConvo || isArrayOfStrings(usernamesInCurrentConvo)) {
+    if (isArrayOfStrings(usernamesInCurrentConvo)) {
+      console.log("usernamesInCurrentConvo", usernamesInCurrentConvo);
+      console.log("here");
+
       searchUsers({
         variables: { username, usernamesInCurrentConvo },
       });
