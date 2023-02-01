@@ -28,6 +28,7 @@ export interface SearchUsersQueryOutput {
 }
 export interface SearchUsersQueryInput {
   username: string;
+  usernamesInCurrentConvo: Array<string> | null;
 }
 export interface SearchedUser {
   id: string;

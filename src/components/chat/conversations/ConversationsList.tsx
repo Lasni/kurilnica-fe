@@ -146,6 +146,8 @@ const ConversationsList = ({
         isOpen={modalOpen}
         onClose={closeModalHandler}
         session={session}
+        conversations={conversations}
+        editingConversation={editingConversation}
       />
       {sortedConversations.map((conversation) => {
         const participant = conversation.participants.find(

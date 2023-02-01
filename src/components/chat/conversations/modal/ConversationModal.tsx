@@ -14,6 +14,7 @@ import { Session } from "next-auth";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { ConversationPopulated } from "../../../../../../backend/src/interfaces/graphqlInterfaces";
 import conversationOperations from "../../../../graphql/operations/conversation";
 import userOperations from "../../../../graphql/operations/user";
 import {
@@ -25,22 +26,30 @@ import {
 } from "../../../../interfaces/graphqlInterfaces";
 import { Participants } from "./Participants";
 import { UserSearchList } from "./UserSearchList";
+import { isArrayOfStrings } from "../../../../util/typeGuards";
 
 interface ConversationModalProps {
   isOpen: boolean;
   onClose: () => void;
   session: Session;
+  conversations: Array<ConversationPopulated>;
+  editingConversation: ConversationPopulated | null;
 }
 
 export const ConversationModal = ({
   isOpen,
   onClose,
   session,
+  conversations,
+  editingConversation,
 }: ConversationModalProps) => {
   const {
     user: { id: userId },
   } = session;
   const router = useRouter();
+  const {
+    query: { conversationId },
+  } = router;
   const [username, setUsername] = useState("");
   const [participants, setParticipants] = useState<Array<SearchedUser>>([]);
   //* search users
@@ -70,7 +79,26 @@ export const ConversationModal = ({
   const handleOnSearchUsers = (event: React.FormEvent) => {
     // search users query
     event.preventDefault();
-    searchUsers({ variables: { username } });
+
+    // Be able to search for users, but only those that are not already participants of this conversation
+
+    const currentConversation = conversations.find(
+      (c) => c.id === conversationId
+    );
+
+    const usernamesInCurrentConvo = currentConversation
+      ? currentConversation.participants
+          .filter((p) => typeof p.user.username === "string")
+          .map((p) => p.user.username)
+      : null;
+
+    console.log("usernamesInCurrentConvo", usernamesInCurrentConvo);
+
+    if (!usernamesInCurrentConvo || isArrayOfStrings(usernamesInCurrentConvo)) {
+      searchUsers({
+        variables: { username, usernamesInCurrentConvo },
+      });
+    }
   };
 
   const handleAddParticipant = (participantToAdd: SearchedUser) => {
@@ -94,13 +122,29 @@ export const ConversationModal = ({
     setParticipants(filteredParticipants);
   };
 
+  const onSubmit = () => {
+    /**
+     * Determine whether to update or create a conversation
+     */
+    editingConversation
+      ? handleUpdateConversation(editingConversation)
+      : handleCreateConversation();
+  };
+
+  const handleUpdateConversation = async (
+    editingConversation: ConversationPopulated
+  ) => {
+    console.log("handleUpdateConversation: ", editingConversation);
+
+    // onClose();
+  };
+
   const handleCreateConversation = async () => {
     const participantIds = [
       userId,
       ...participants.map((participant) => participant.id),
     ];
     // add self to conversation
-
     try {
       const { data } = await createConversation({
         variables: { participantIds },
@@ -108,7 +152,6 @@ export const ConversationModal = ({
       if (!data?.createConversation) {
         throw new Error("Failed to create conversation");
       }
-
       /**
        * get conversationId and add it to url
        */
@@ -116,7 +159,6 @@ export const ConversationModal = ({
         createConversation: { conversationId },
       } = data;
       router.push({ query: { conversationId } });
-
       /**
        * clear state and close modal on successful creation
        */
@@ -133,7 +175,11 @@ export const ConversationModal = ({
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent bg={`#2d2d2d`} pb={4}>
-          <ModalHeader>Create a conversation</ModalHeader>
+          <ModalHeader>
+            {editingConversation
+              ? `Edit conversation ${editingConversation.id}`
+              : "Create a conversation"}
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <form onSubmit={handleOnSearchUsers}>
@@ -171,9 +217,11 @@ export const ConversationModal = ({
                   _hover={{ bg: "brand.100" }}
                   // disabled
                   isLoading={createConversationLoading}
-                  onClick={handleCreateConversation}
+                  onClick={onSubmit}
                 >
-                  Create a conversation
+                  {editingConversation
+                    ? "Update conversation"
+                    : "Create a conversation"}
                 </Button>
               </>
             )}
