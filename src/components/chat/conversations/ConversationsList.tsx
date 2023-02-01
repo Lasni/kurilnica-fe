@@ -52,15 +52,11 @@ const ConversationsList = ({
   const [editingConversation, setEditingConversation] =
     useState<ConversationPopulated | null>(null);
 
-  // const [modalIsOpen, setModalIsOpen] = useState(false);
-
   const openModalHandler = () => {
-    // setModalIsOpen(true)
     openModal();
   };
 
   const closeModalHandler = () => {
-    // setModalIsOpen(false);
     closeModal();
     setEditingConversation(null);
   };
@@ -114,10 +110,12 @@ const ConversationsList = ({
     }
   };
 
-  const onEditConversation = async (conversation: ConversationPopulated) => {
+  const onEditConversation = (conversation: ConversationPopulated) => {
     console.log("onEditConversation");
     console.log("conversation: ", conversation);
     setEditingConversation(conversation);
+    openModal();
+    // closeModal();
   };
 
   const sortedConversations = [...conversations].sort(
