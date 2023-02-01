@@ -3,7 +3,7 @@ import { Box, Button, Text } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import toast from "react-hot-toast";
 import { ConversationPopulated } from "../../../../../backend/src/interfaces/graphqlInterfaces";
 import conversationOperations from "../../../graphql/operations/conversation";
@@ -15,6 +15,7 @@ import {
 } from "../../../interfaces/graphqlInterfaces";
 import { ConversationItem } from "./ConversationItem";
 import { ConversationModal } from "./modal/ConversationModal";
+import { IModalContext, ModalContext } from "../../../context/ModalContext";
 
 interface ConversationsListProps {
   session: Session;
@@ -45,11 +46,24 @@ const ConversationsList = ({
     LeaveConversationUseMutationInput
   >(conversationOperations.Mutations.leaveConversation);
 
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const { modalOpen, openModal, closeModal } =
+    useContext<IModalContext>(ModalContext);
 
-  const openModalHandler = () => setModalIsOpen(true);
+  const [editingConversation, setEditingConversation] =
+    useState<ConversationPopulated | null>(null);
 
-  const closeModalHandler = () => setModalIsOpen(false);
+  // const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  const openModalHandler = () => {
+    // setModalIsOpen(true)
+    openModal();
+  };
+
+  const closeModalHandler = () => {
+    // setModalIsOpen(false);
+    closeModal();
+    setEditingConversation(null);
+  };
 
   const onDeleteConversation = async (conversationId: string) => {
     try {
@@ -77,7 +91,7 @@ const ConversationsList = ({
     }
   };
 
-  async function onLeaveConversation(conversation: ConversationPopulated) {
+  const onLeaveConversation = async (conversation: ConversationPopulated) => {
     const participantsIdsToUpdate = conversation.participants
       .filter((p) => p.user.id !== userId)
       .map((p) => p.user.id);
@@ -98,7 +112,13 @@ const ConversationsList = ({
       console.error("onLeaveConversation error: ", error);
       toast.error(error?.message);
     }
-  }
+  };
+
+  const onEditConversation = async (conversation: ConversationPopulated) => {
+    console.log("onEditConversation");
+    console.log("conversation: ", conversation);
+    setEditingConversation(conversation);
+  };
 
   const sortedConversations = [...conversations].sort(
     (a, b) => b.updatedAt.valueOf() - a.updatedAt.valueOf()
@@ -125,7 +145,7 @@ const ConversationsList = ({
         </Text>
       </Box>
       <ConversationModal
-        isOpen={modalIsOpen}
+        isOpen={modalOpen}
         onClose={closeModalHandler}
         session={session}
       />
@@ -153,6 +173,7 @@ const ConversationsList = ({
             }
             onDeleteConversationCallback={onDeleteConversation}
             onLeaveConversationCallback={onLeaveConversation}
+            onEditConversationCallback={onEditConversation}
           />
         );
       })}

@@ -26,6 +26,7 @@ interface ConversationItemProps {
   onClick: () => void;
   onDeleteConversationCallback: (conversationId: string) => void;
   onLeaveConversationCallback: (conversation: ConversationPopulated) => void;
+  onEditConversationCallback: (conversation: ConversationPopulated) => void;
 }
 const formatRelativeLocale = {
   lastWeek: "eeee",
@@ -42,6 +43,7 @@ export const ConversationItem = ({
   onClick,
   onDeleteConversationCallback,
   onLeaveConversationCallback,
+  onEditConversationCallback,
 }: ConversationItemProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -78,7 +80,7 @@ export const ConversationItem = ({
             _hover={{ bg: "whiteAlpha.300" }}
             onClick={(event) => {
               event.stopPropagation();
-              // onEditConversation();
+              onEditConversationCallback(conversation);
             }}
           >
             Edit
