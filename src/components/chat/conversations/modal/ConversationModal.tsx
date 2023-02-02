@@ -46,10 +46,10 @@ export const ConversationModal = ({
   const {
     user: { id: userId },
   } = session;
+
   const router = useRouter();
-  const {
-    query: { conversationId },
-  } = router;
+  // const { query } = router;
+
   const [username, setUsername] = useState("");
   const [participants, setParticipants] = useState<Array<SearchedUser>>([]);
   //* search users
@@ -77,34 +77,37 @@ export const ConversationModal = ({
   >(conversationOperations.Mutations.createConversation);
 
   const handleOnSearchUsers = (event: React.FormEvent) => {
-    // search users query
     event.preventDefault();
 
-    // Be able to search for users, but only those that are not already participants of this conversation
+    // Conversation can be edited even from root url (no conversationId param)
+    const conversationId = editingConversation?.id || null;
 
     const currentConversation = conversations.find(
       (c) => c.id === conversationId
     );
 
-    const usernamesInCurrentConvo = currentConversation
+    let usernamesInCurrentConvo = currentConversation
       ? currentConversation.participants
           .filter((p) => typeof p.user.username === "string")
           .map((p) => p.user.username)
       : null;
 
-    if (username.length < 2) {
-      toast.error("Type at least 2 characters");
-      return;
+    /**
+     * If wanting to create a new conversation while inside of an existing conversation
+     * (user search should not be limited)
+     **/
+    if (!editingConversation) {
+      usernamesInCurrentConvo = null;
     }
 
-    if (isArrayOfStrings(usernamesInCurrentConvo)) {
-      console.log("usernamesInCurrentConvo", usernamesInCurrentConvo);
-      console.log("here");
-
-      searchUsers({
-        variables: { username, usernamesInCurrentConvo },
-      });
-    }
+    searchUsers({
+      variables: {
+        username,
+        usernamesInCurrentConvo: isArrayOfStrings(usernamesInCurrentConvo)
+          ? usernamesInCurrentConvo
+          : [],
+      },
+    });
   };
 
   const handleAddParticipant = (participantToAdd: SearchedUser) => {
