@@ -23,6 +23,8 @@ import {
   SearchedUser,
   SearchUsersQueryInput,
   SearchUsersQueryOutput,
+  UpdateConversationUseMutationInput,
+  UpdateConversationUseMutationOutput,
 } from "../../../../interfaces/graphqlInterfaces";
 import { Participants } from "./Participants";
 import { UserSearchList } from "./UserSearchList";
@@ -75,6 +77,18 @@ export const ConversationModal = ({
     CreateConversationUseMutationOutput,
     CreateConversationUseMutationInput
   >(conversationOperations.Mutations.createConversation);
+
+  const [
+    updateConversation,
+    {
+      data: updateConversationData,
+      loading: updateConversationLoading,
+      error: updateConversationError,
+    },
+  ] = useMutation<
+    UpdateConversationUseMutationOutput,
+    UpdateConversationUseMutationInput
+  >(conversationOperations.Mutations.updateConversation);
 
   const handleOnSearchUsers = (event: React.FormEvent) => {
     event.preventDefault();
@@ -143,7 +157,22 @@ export const ConversationModal = ({
   const handleUpdateConversation = async (
     editingConversation: ConversationPopulated
   ) => {
-    console.log("handleUpdateConversation: ", editingConversation);
+    // console.log("handleUpdateConversation: ", editingConversation);
+    const conversationId = editingConversation.id;
+    const participantIds = [
+      ...participants.map((participant) => participant.id),
+    ];
+    // console.log("participants", participants);
+
+    try {
+      const { data } = await updateConversation({
+        variables: { conversationId, participantIds },
+      });
+
+      console.log("handleUpdateConversation data: ", data);
+    } catch (error: any) {
+      toast.error("Failed to update the conversation");
+    }
 
     // onClose();
   };

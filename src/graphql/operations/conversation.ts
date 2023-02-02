@@ -72,6 +72,21 @@ const conversationOperations = {
         }
       }
     `,
+    updateConversation: gql`
+      mutation UpdateConversation(
+        $conversationId: String!
+        $participantIds: [String]!
+      ) {
+        updateConversation(
+          conversationId: $conversationId
+          participantIds: $participantIds
+        ) {
+          success
+          error
+          conversationId
+        }
+      }
+    `,
   },
   Subscriptions: {
     conversationCreated: gql`

@@ -76,7 +76,6 @@ export const ConversationItem = ({
         <MenuList>
           <MenuItem
             icon={<AiOutlineEdit fontSize={20} />}
-            // bg="#2d2d2d"
             _hover={{ bg: "whiteAlpha.300" }}
             onClick={(event) => {
               event.stopPropagation();
@@ -85,7 +84,7 @@ export const ConversationItem = ({
           >
             Edit
           </MenuItem>
-          {conversation.participants.length > 2 ? (
+          {conversation.participants.length > 1 ? (
             <MenuItem
               icon={<BiLogOut fontSize={20} />}
               _hover={{ bg: "whiteAlpha.300" }}
