@@ -64,6 +64,7 @@ const ConversationsWrapper: React.FunctionComponent<
           conversationUpdated: {
             conversation: updatedConversation,
             removedUserIds,
+            addedUserIds,
           },
         } = conversationUpdatedSubscriptionData;
 
@@ -71,37 +72,68 @@ const ConversationsWrapper: React.FunctionComponent<
           updatedConversation;
 
         /**
-         * Check if user is being removed
+         * User being removed
          */
         if (removedUserIds && removedUserIds.length > 0) {
+          // console.log("removedUserIds: ", removedUserIds);
+          // console.log("userId: ", userId);
           const isBeingRemoved = removedUserIds.find((id) => id === userId);
-          if (isBeingRemoved) {
-            const conversationsData =
-              client.readQuery<ConversationsQueryOutput>({
-                query: conversationOperations.Queries.conversations,
-              });
+          if (!isBeingRemoved) return;
+          const conversationsData = client.readQuery<ConversationsQueryOutput>({
+            query: conversationOperations.Queries.conversations,
+          });
+          if (!conversationsData) return;
+          console.log("conversationsData", conversationsData);
+          const filteredConversations = conversationsData.conversations.filter(
+            (c) => c.id !== updatedConversationId
+          );
+          client.writeQuery<ConversationsQueryOutput>({
+            query: conversationOperations.Queries.conversations,
+            data: {
+              conversations: filteredConversations,
+            },
+          });
+          // Redirect to home after cache updates
+          if (conversationId === updatedConversationId) {
+            router.replace("");
+          }
+          // Early return - no more updates required
+        }
 
-            if (!conversationsData) return;
+        /**
+         * Users being added
+         */
+        if (addedUserIds && addedUserIds.length > 0) {
+          console.log("userId: ", userId);
+          console.log("addedUserIds: ", addedUserIds);
 
-            const filteredConversations =
-              conversationsData.conversations.filter(
-                (c) => c.id !== updatedConversationId
-              );
+          const isBeingAdded = addedUserIds.find((id) => id === userId);
+          if (!isBeingAdded) return;
 
+          console.log("updatedConversation: ", updatedConversation);
+
+          const conversationsData = client.readQuery<ConversationsQueryOutput>({
+            query: conversationOperations.Queries.conversations,
+          });
+
+          if (conversationsData) {
             client.writeQuery<ConversationsQueryOutput>({
               query: conversationOperations.Queries.conversations,
               data: {
-                conversations: filteredConversations,
+                conversations: [
+                  updatedConversation,
+                  ...conversationsData.conversations,
+                ],
               },
             });
-
-            // Redirect to home after cache updates
-            if (conversationId === updatedConversationId) {
-              router.replace("");
-            }
-
-            // Early return - no more updates required
-            return;
+          } else {
+            console.log("else");
+            client.writeQuery<ConversationsQueryOutput>({
+              query: conversationOperations.Queries.conversations,
+              data: {
+                conversations: [updatedConversation],
+              },
+            });
           }
         }
 

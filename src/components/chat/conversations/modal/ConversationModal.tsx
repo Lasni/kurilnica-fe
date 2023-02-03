@@ -168,7 +168,6 @@ export const ConversationModal = ({
       const { data } = await updateConversation({
         variables: { conversationId, participantIds },
       });
-
       console.log("handleUpdateConversation data: ", data);
     } catch (error: any) {
       toast.error("Failed to update the conversation");
