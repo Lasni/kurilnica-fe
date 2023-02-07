@@ -51,12 +51,18 @@ const ConversationsWrapper: React.FunctionComponent<
     MarkConversationAsReadUseMutationInput
   >(conversationOperations.Mutations.markConversationAsRead);
 
+  //! Created test-branch02 where new message updates to conversationItems still works. Will work from here
+  //! Note - here when a new message is sent this subscription fires, whereas on the buggy commit it doesn't
   // conversationUpdated subscription
   useSubscription<ConversationUpdatedSubscriptionOutput, null>(
     conversationOperations.Subscriptions.conversationUpdated,
     {
       onData: ({ client, data }) => {
         const { data: conversationUpdatedSubscriptionData } = data;
+        console.log(
+          "conversationUpdatedSubscriptionData",
+          conversationUpdatedSubscriptionData
+        );
 
         if (!conversationUpdatedSubscriptionData) return;
 
