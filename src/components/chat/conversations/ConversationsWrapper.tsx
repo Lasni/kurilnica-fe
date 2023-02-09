@@ -75,8 +75,6 @@ const ConversationsWrapper: React.FunctionComponent<
          * User being removed
          */
         if (removedUserIds && removedUserIds.length > 0) {
-          // console.log("removedUserIds: ", removedUserIds);
-          // console.log("userId: ", userId);
           const isBeingRemoved = removedUserIds.find((id) => id === userId);
           if (!isBeingRemoved) return;
           const conversationsData = client.readQuery<ConversationsQueryOutput>({
@@ -104,13 +102,8 @@ const ConversationsWrapper: React.FunctionComponent<
          * Users being added
          */
         if (addedUserIds && addedUserIds.length > 0) {
-          console.log("userId: ", userId);
-          console.log("addedUserIds: ", addedUserIds);
-
           const isBeingAdded = addedUserIds.find((id) => id === userId);
           if (!isBeingAdded) return;
-
-          console.log("updatedConversation: ", updatedConversation);
 
           const conversationsData = client.readQuery<ConversationsQueryOutput>({
             query: conversationOperations.Queries.conversations,
