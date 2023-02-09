@@ -102,6 +102,7 @@ export interface ConversationUpdatedSubscriptionOutput {
   conversationUpdated: {
     conversation: ConversationPopulated;
     removedUserIds: Array<string>;
+    addedUserIds: Array<string>;
   };
 }
 

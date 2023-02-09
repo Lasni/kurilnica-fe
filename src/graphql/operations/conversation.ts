@@ -104,6 +104,7 @@ const conversationOperations = {
             ${conversationFields}
           }
           removedUserIds
+          addedUserIds
         }
       }
     `,

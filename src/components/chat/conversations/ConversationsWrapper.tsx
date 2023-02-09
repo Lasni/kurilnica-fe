@@ -71,6 +71,7 @@ const ConversationsWrapper: React.FunctionComponent<
           conversationUpdated: {
             conversation: updatedConversation,
             removedUserIds,
+            addedUserIds,
           },
         } = conversationUpdatedSubscriptionData;
 
