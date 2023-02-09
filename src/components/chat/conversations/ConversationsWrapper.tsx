@@ -54,6 +54,7 @@ const ConversationsWrapper: React.FunctionComponent<
   //! Created test-branch02 where new message updates to conversationItems still works. Will work from here
   //! Note - here when a new message is sent this subscription fires, whereas on the buggy commit it doesn't
   // conversationUpdated subscription
+  // 9.2.23 - adding users to conversation, the changes are reflected in the existing clients, not yet in the client being added
   useSubscription<ConversationUpdatedSubscriptionOutput, null>(
     conversationOperations.Subscriptions.conversationUpdated,
     {
