@@ -33,19 +33,20 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
   const handleOnSendMessage = async (event: React.FormEvent) => {
     event.preventDefault();
 
+    if (!messageBody) return;
+
     try {
       const {
         user: { id: senderId },
       } = session;
-
       const messageId = new ObjectID().toString();
-
       const newMessage = {
         id: messageId,
         senderId,
         conversationId,
         body: messageBody,
       };
+      setMessageBody("");
 
       const { data: sendMessageData, errors } = await sendMessage({
         variables: { ...newMessage },
@@ -71,10 +72,7 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
               ...existingMessagesData,
               messages: [
                 {
-                  id: messageId,
-                  conversationId,
-                  senderId: session.user.id,
-                  body: messageBody,
+                  ...newMessage,
                   sender: {
                     id: session.user.id,
                     username: session.user.username,
@@ -92,7 +90,6 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
       if (!sendMessageData?.sendMessage || errors) {
         throw new Error("Failed to send message");
       }
-      setMessageBody("");
     } catch (error: any) {
       console.error("onSendMessage error", error);
       toast.error(error.message);
