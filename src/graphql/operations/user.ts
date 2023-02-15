@@ -27,8 +27,23 @@ const userOperations = {
         }
       }
     `,
+    inviteUserToConversation: gql`
+      mutation InviteUserToConversation($userId: String!) {
+        # name below must match the mutation name in user typeDefs (BE)
+        inviteUserToConversation(userId: $userId) {
+          success
+          error
+        }
+      }
+    `,
   },
-  Subscriptions: {},
+  Subscriptions: {
+    userInvitedToConversation: gql`
+      subscription UserInvitedToConversation {
+        userInvitedToConversation
+      }
+    `,
+  },
 };
 
 export default userOperations;

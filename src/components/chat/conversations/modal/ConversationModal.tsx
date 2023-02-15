@@ -29,6 +29,10 @@ import {
 import { Participants } from "./Participants";
 import { UserSearchList } from "./UserSearchList";
 import { isArrayOfStrings } from "../../../../util/typeGuards";
+import {
+  InviteUserUseMutationOutput,
+  InviteUserUseMutationInput,
+} from "../../../../interfaces/graphqlInterfaces";
 
 interface ConversationModalProps {
   isOpen: boolean;
@@ -65,6 +69,19 @@ export const ConversationModal = ({
   ] = useLazyQuery<SearchUsersQueryOutput, SearchUsersQueryInput>(
     userOperations.Queries.searchUsers
   );
+
+  //* invite user
+  const [
+    inviteUserToConversation,
+    {
+      data: inviteUserData,
+      loading: inviteUserLoading,
+      error: inviteUserError,
+    },
+  ] = useMutation<InviteUserUseMutationOutput, InviteUserUseMutationInput>(
+    userOperations.Mutations.inviteUserToConversation
+  );
+
   //* create conversation
   const [
     createConversation,
@@ -165,10 +182,24 @@ export const ConversationModal = ({
     // console.log("participants", participants);
 
     try {
-      const { data } = await updateConversation({
-        variables: { conversationId, participantIds },
+      // console.log("editingConversation: ", editingConversation);
+      // console.log("participants: ", participants);
+      // console.log("participantIds", participantIds);
+      // console.log("handleUpdateConversation data: ", data);
+      // send a request (toast) to the client that's being added
+      // const {data} = await sendUpdateConversationRequest({
+      //   variables: {...participantIds}
+      // })
+      // if they confirm then update the conversation
+      // const { data } = await updateConversation({
+      //   variables: { conversationId, participantIds },
+      // });
+
+      const { data } = await inviteUserToConversation({
+        variables: { userId: "63ecf46b2290588fddc71b94" },
       });
-      console.log("handleUpdateConversation data: ", data);
+      console.log("participantIds[0]", participantIds[0]);
+      console.log("data: ", data);
     } catch (error: any) {
       toast.error("Failed to update the conversation");
     }

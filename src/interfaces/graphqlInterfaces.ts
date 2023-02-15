@@ -22,6 +22,16 @@ export interface CreateUsernameUseMutationInput {
   username: string;
 }
 
+export interface InviteUserUseMutationOutput {
+  inviteUserToConversation: {
+    success: boolean;
+    error: string;
+  };
+}
+export interface InviteUserUseMutationInput {
+  userId: string;
+}
+
 // searchUsers query
 export interface SearchUsersQueryOutput {
   searchUsers: Array<SearchedUser>;
@@ -111,6 +121,10 @@ export interface ConversationDeletedSubscriptionOutput {
   conversationDeleted: {
     id: string;
   };
+}
+
+export interface UserInvitedToConversationSubscriptionOutput {
+  userInvitedToConversation: boolean;
 }
 
 // conversations query

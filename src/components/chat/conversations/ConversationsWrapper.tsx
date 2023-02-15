@@ -17,6 +17,8 @@ import {
 } from "../../../interfaces/graphqlInterfaces";
 import { SkeletonLoader } from "../../common/SkeletonLoader";
 import ConversationsList from "./ConversationsList";
+import userOperations from "../../../graphql/operations/user";
+import { UserInvitedToConversationSubscriptionOutput } from "../../../interfaces/graphqlInterfaces";
 
 interface ConversationsWrapperProps {
   session: Session;
@@ -28,6 +30,8 @@ const ConversationsWrapper: React.FunctionComponent<
   const {
     user: { id: userId },
   } = session;
+
+  console.log("userId: ", userId);
 
   //* useQuery
   const {
@@ -207,6 +211,42 @@ const ConversationsWrapper: React.FunctionComponent<
         });
 
         router.push("/");
+      },
+    }
+  );
+
+  // userInvitedToConversation subscription
+  useSubscription<UserInvitedToConversationSubscriptionOutput, null>(
+    userOperations.Subscriptions.userInvitedToConversation,
+    {
+      onData: ({ client, data }) => {
+        console.log("userInvitedToConversation subscription data: ", data);
+        // const { data: conversationDeletedSubscriptionData } = data;
+        // if (!conversationDeletedSubscriptionData) return;
+
+        // const existingConversationsCache =
+        //   client.readQuery<ConversationsQueryOutput>({
+        //     query: conversationOperations.Queries.conversations,
+        //   });
+        // if (!existingConversationsCache) return;
+
+        // const { conversations } = existingConversationsCache;
+        // const {
+        //   conversationDeleted: { id: deletedConversationId },
+        // } = conversationDeletedSubscriptionData;
+
+        // const filteredConversations = conversations.filter(
+        //   (c) => c.id !== deletedConversationId
+        // );
+
+        // client.writeQuery<ConversationsQueryOutput>({
+        //   query: conversationOperations.Queries.conversations,
+        //   data: {
+        //     conversations: filteredConversations,
+        //   },
+        // });
+
+        // router.push("/");
       },
     }
   );
