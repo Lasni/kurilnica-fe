@@ -128,6 +128,7 @@ export interface UserInvitedToConversationSubscriptionOutput {
   userInvitedToConversation: {
     invitedUserId: string;
     invitingUserId: string;
+    invitingUserUsername: string;
     // success: boolean;
     // error: string;
     // userId: string;

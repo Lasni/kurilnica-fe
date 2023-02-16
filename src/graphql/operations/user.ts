@@ -44,6 +44,7 @@ const userOperations = {
         userInvitedToConversation {
           invitedUserId
           invitingUserId
+          invitingUserUsername
           # success
           # error
           # userId

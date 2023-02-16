@@ -1,5 +1,5 @@
 import { gql, useMutation, useQuery, useSubscription } from "@apollo/client";
-import { Box } from "@chakra-ui/react";
+import { Box, Icon } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -19,6 +19,7 @@ import { SkeletonLoader } from "../../common/SkeletonLoader";
 import ConversationsList from "./ConversationsList";
 import userOperations from "../../../graphql/operations/user";
 import { UserInvitedToConversationSubscriptionOutput } from "../../../interfaces/graphqlInterfaces";
+import toast from "react-hot-toast";
 
 interface ConversationsWrapperProps {
   session: Session;
@@ -220,9 +221,40 @@ const ConversationsWrapper: React.FunctionComponent<
     userOperations.Subscriptions.userInvitedToConversation,
     {
       onData: ({ client, data }) => {
-        console.log("userInvitedToConversation subscription data: ", data);
-        // const { data: conversationDeletedSubscriptionData } = data;
-        // if (!conversationDeletedSubscriptionData) return;
+        // console.log("userInvitedToConversation subscription data: ", data);
+        // console.log("client: ", client);
+        const { data: userInvitedToConversationData } = data;
+        if (!userInvitedToConversationData) return;
+
+        if (
+          userInvitedToConversationData.userInvitedToConversation
+            .invitedUserId === userId
+        ) {
+          const { invitedUserId, invitingUserId, invitingUserUsername } =
+            userInvitedToConversationData.userInvitedToConversation;
+          toast.loading(
+            (t) => (
+              <span>
+                User ${invitingUserUsername} has invited you to conversation
+                <div>
+                  <button
+                    onClick={() => onHandleConversationInvitation(true, t.id)}
+                  >
+                    Accept
+                  </button>
+                  <button
+                    onClick={() => onHandleConversationInvitation(false, t.id)}
+                  >
+                    Decline
+                  </button>
+                </div>
+              </span>
+            ),
+            {
+              icon: <Icon />,
+            }
+          );
+        }
         // const existingConversationsCache =
         //   client.readQuery<ConversationsQueryOutput>({
         //     query: conversationOperations.Queries.conversations,
@@ -245,6 +277,20 @@ const ConversationsWrapper: React.FunctionComponent<
       },
     }
   );
+
+  const onHandleConversationInvitation = (accept: boolean, toastId: string) => {
+    console.log(toastId);
+    if (accept) {
+      // return a positive response
+      console.log("accept");
+    }
+    // return a negative response
+    else {
+      console.log("dismiss");
+    }
+
+    toast.dismiss(toastId);
+  };
 
   const onViewConversation = async (
     conversationId: string,
