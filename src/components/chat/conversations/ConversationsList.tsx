@@ -111,8 +111,8 @@ const ConversationsList = ({
   };
 
   const onEditConversation = (conversation: ConversationPopulated) => {
-    console.log("onEditConversation");
-    console.log("conversation: ", conversation);
+    // console.log("onEditConversation");
+    // console.log("conversation: ", conversation);
     setEditingConversation(conversation);
     openModal();
     // closeModal();

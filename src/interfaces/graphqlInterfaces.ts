@@ -26,6 +26,7 @@ export interface InviteUserUseMutationOutput {
   inviteUserToConversation: {
     success: boolean;
     error: string;
+    userId: string;
   };
 }
 export interface InviteUserUseMutationInput {
@@ -124,7 +125,11 @@ export interface ConversationDeletedSubscriptionOutput {
 }
 
 export interface UserInvitedToConversationSubscriptionOutput {
-  userInvitedToConversation: boolean;
+  userInvitedToConversation: {
+    success: boolean;
+    error: string;
+    userId: string;
+  };
 }
 
 // conversations query

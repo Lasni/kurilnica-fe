@@ -31,7 +31,7 @@ const ConversationsWrapper: React.FunctionComponent<
     user: { id: userId },
   } = session;
 
-  console.log("userId: ", userId);
+  // console.log("userId: ", userId);
 
   //* useQuery
   const {
@@ -85,7 +85,7 @@ const ConversationsWrapper: React.FunctionComponent<
             query: conversationOperations.Queries.conversations,
           });
           if (!conversationsData) return;
-          console.log("conversationsData", conversationsData);
+          // console.log("conversationsData", conversationsData);
           const filteredConversations = conversationsData.conversations.filter(
             (c) => c.id !== updatedConversationId
           );
@@ -124,7 +124,7 @@ const ConversationsWrapper: React.FunctionComponent<
               },
             });
           } else {
-            console.log("else");
+            // console.log("else");
             client.writeQuery<ConversationsQueryOutput>({
               query: conversationOperations.Queries.conversations,
               data: {
@@ -223,29 +223,24 @@ const ConversationsWrapper: React.FunctionComponent<
         console.log("userInvitedToConversation subscription data: ", data);
         // const { data: conversationDeletedSubscriptionData } = data;
         // if (!conversationDeletedSubscriptionData) return;
-
         // const existingConversationsCache =
         //   client.readQuery<ConversationsQueryOutput>({
         //     query: conversationOperations.Queries.conversations,
         //   });
         // if (!existingConversationsCache) return;
-
         // const { conversations } = existingConversationsCache;
         // const {
         //   conversationDeleted: { id: deletedConversationId },
         // } = conversationDeletedSubscriptionData;
-
         // const filteredConversations = conversations.filter(
         //   (c) => c.id !== deletedConversationId
         // );
-
         // client.writeQuery<ConversationsQueryOutput>({
         //   query: conversationOperations.Queries.conversations,
         //   data: {
         //     conversations: filteredConversations,
         //   },
         // });
-
         // router.push("/");
       },
     }

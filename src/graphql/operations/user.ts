@@ -33,6 +33,7 @@ const userOperations = {
         inviteUserToConversation(userId: $userId) {
           success
           error
+          userId
         }
       }
     `,
@@ -40,7 +41,11 @@ const userOperations = {
   Subscriptions: {
     userInvitedToConversation: gql`
       subscription UserInvitedToConversation {
-        userInvitedToConversation
+        userInvitedToConversation {
+          success
+          error
+          userId
+        }
       }
     `,
   },

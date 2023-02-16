@@ -198,8 +198,8 @@ export const ConversationModal = ({
       const { data } = await inviteUserToConversation({
         variables: { userId: "63ecf46b2290588fddc71b94" },
       });
-      console.log("participantIds[0]", participantIds[0]);
-      console.log("data: ", data);
+      // console.log("participantIds[0]", participantIds[0]);
+      console.log("inviteUserToConversation data: ", data);
     } catch (error: any) {
       toast.error("Failed to update the conversation");
     }
