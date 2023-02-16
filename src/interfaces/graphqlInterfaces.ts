@@ -126,9 +126,11 @@ export interface ConversationDeletedSubscriptionOutput {
 
 export interface UserInvitedToConversationSubscriptionOutput {
   userInvitedToConversation: {
-    success: boolean;
-    error: string;
-    userId: string;
+    invitedUserId: string;
+    invitingUserId: string;
+    // success: boolean;
+    // error: string;
+    // userId: string;
   };
 }
 

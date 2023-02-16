@@ -42,9 +42,11 @@ const userOperations = {
     userInvitedToConversation: gql`
       subscription UserInvitedToConversation {
         userInvitedToConversation {
-          success
-          error
-          userId
+          invitedUserId
+          invitingUserId
+          # success
+          # error
+          # userId
         }
       }
     `,
