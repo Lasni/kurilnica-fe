@@ -182,7 +182,8 @@ export const ConversationModal = ({
     // console.log("participants", participants);
 
     try {
-      // console.log("editingConversation: ", editingConversation);
+      console.log("editingConversation: ", editingConversation);
+      // console.log(typeof editingConversation.updatedAt);
       // console.log("participants: ", participants);
       // console.log("participantIds", participantIds);
       // console.log("handleUpdateConversation data: ", data);
@@ -196,7 +197,21 @@ export const ConversationModal = ({
       // });
 
       const { data } = await inviteUserToConversation({
-        variables: { userId: "63ecf46b2290588fddc71b94" },
+        variables: {
+          userId: participantIds[0],
+          conversationId: editingConversation.id,
+          // editingConversation: {
+          //   id: editingConversation.id,
+          //   updatedAt: editingConversation.updatedAt,
+          //   latestMessage: {
+          //     // ...editingConversation.latestMessage,
+          //     id: editingConversation?.latestMessage?.id,
+          //     body: editingConversation?.latestMessage?.body,
+          //     createdAt: editingConversation?.latestMessage?.createdAt,
+          //     // sender: editingConversation.latestMessage?.sender,
+          //   },
+          // },
+        },
       });
       // console.log("participantIds[0]", participantIds[0]);
       console.log("inviteUserToConversation data: ", data);

@@ -226,12 +226,25 @@ const ConversationsWrapper: React.FunctionComponent<
         const { data: userInvitedToConversationData } = data;
         if (!userInvitedToConversationData) return;
 
+        console.log(
+          "userInvitedToConversationData",
+          userInvitedToConversationData
+        );
+
         if (
           userInvitedToConversationData.userInvitedToConversation
             .invitedUserId === userId
         ) {
-          const { invitedUserId, invitingUserId, invitingUserUsername } =
-            userInvitedToConversationData.userInvitedToConversation;
+          const {
+            invitedUserId,
+            invitingUserId,
+            invitingUserUsername,
+            conversationId,
+          } = userInvitedToConversationData.userInvitedToConversation;
+
+          console.log(
+            `invitedUserId: ${invitedUserId}\ninvitingUserId: ${invitingUserId}\nconversationId: ${conversationId}`
+          );
           toast.loading(
             (t) => (
               <span>
@@ -255,34 +268,15 @@ const ConversationsWrapper: React.FunctionComponent<
             }
           );
         }
-        // const existingConversationsCache =
-        //   client.readQuery<ConversationsQueryOutput>({
-        //     query: conversationOperations.Queries.conversations,
-        //   });
-        // if (!existingConversationsCache) return;
-        // const { conversations } = existingConversationsCache;
-        // const {
-        //   conversationDeleted: { id: deletedConversationId },
-        // } = conversationDeletedSubscriptionData;
-        // const filteredConversations = conversations.filter(
-        //   (c) => c.id !== deletedConversationId
-        // );
-        // client.writeQuery<ConversationsQueryOutput>({
-        //   query: conversationOperations.Queries.conversations,
-        //   data: {
-        //     conversations: filteredConversations,
-        //   },
-        // });
-        // router.push("/");
       },
     }
   );
 
   const onHandleConversationInvitation = (accept: boolean, toastId: string) => {
-    console.log(toastId);
     if (accept) {
       // return a positive response
       console.log("accept");
+      // fire respondToConversationInvitationMutation
     }
     // return a negative response
     else {

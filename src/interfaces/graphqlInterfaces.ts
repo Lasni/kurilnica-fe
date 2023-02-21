@@ -1,4 +1,5 @@
 import { Session } from "next-auth";
+import { Participants } from "../components/chat/conversations/modal/Participants";
 import {
   ConversationPopulated,
   MessagePopulated,
@@ -31,7 +32,37 @@ export interface InviteUserUseMutationOutput {
 }
 export interface InviteUserUseMutationInput {
   userId: string;
+  conversationId: string;
+  // editingConversation: EditingConversation;
+  // editingConversation: ConversationPopulated;
 }
+
+// export interface EditingConversation {
+//   id: string;
+//   latestMessage: LatestMessage | null;
+//   // participants: Array<Participant>;
+//   updatedAt: Date;
+// }
+
+// export interface Participant {
+//   user: User;
+//   hasSeenLatestMessage: boolean;
+// }
+
+// export interface User {
+//   id: string;
+//   username: string | null;
+// }
+// export interface LatestMessage {
+//   body?: string;
+//   createdAt?: Date;
+//   id?: string;
+//   // sender?: Sender;
+// }
+// export interface Sender {
+//   id: string;
+//   username: string | null;
+// }
 
 // searchUsers query
 export interface SearchUsersQueryOutput {
@@ -129,6 +160,7 @@ export interface UserInvitedToConversationSubscriptionOutput {
     invitedUserId: string;
     invitingUserId: string;
     invitingUserUsername: string;
+    conversationId: string;
     // success: boolean;
     // error: string;
     // userId: string;
