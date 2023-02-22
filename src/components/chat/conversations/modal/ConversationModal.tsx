@@ -174,52 +174,22 @@ export const ConversationModal = ({
   const handleUpdateConversation = async (
     editingConversation: ConversationPopulated
   ) => {
-    // console.log("handleUpdateConversation: ", editingConversation);
     const conversationId = editingConversation.id;
     const participantIds = [
       ...participants.map((participant) => participant.id),
     ];
-    // console.log("participants", participants);
 
     try {
-      console.log("editingConversation: ", editingConversation);
-      // console.log(typeof editingConversation.updatedAt);
-      // console.log("participants: ", participants);
-      // console.log("participantIds", participantIds);
-      // console.log("handleUpdateConversation data: ", data);
-      // send a request (toast) to the client that's being added
-      // const {data} = await sendUpdateConversationRequest({
-      //   variables: {...participantIds}
-      // })
-      // if they confirm then update the conversation
-      // const { data } = await updateConversation({
-      //   variables: { conversationId, participantIds },
-      // });
-
       const { data } = await inviteUserToConversation({
         variables: {
           userId: participantIds[0],
-          conversationId: editingConversation.id,
-          // editingConversation: {
-          //   id: editingConversation.id,
-          //   updatedAt: editingConversation.updatedAt,
-          //   latestMessage: {
-          //     // ...editingConversation.latestMessage,
-          //     id: editingConversation?.latestMessage?.id,
-          //     body: editingConversation?.latestMessage?.body,
-          //     createdAt: editingConversation?.latestMessage?.createdAt,
-          //     // sender: editingConversation.latestMessage?.sender,
-          //   },
-          // },
+          conversationId,
         },
       });
-      // console.log("participantIds[0]", participantIds[0]);
-      console.log("inviteUserToConversation data: ", data);
     } catch (error: any) {
       toast.error("Failed to update the conversation");
     }
-
-    // onClose();
+    onClose();
   };
 
   const handleCreateConversation = async () => {

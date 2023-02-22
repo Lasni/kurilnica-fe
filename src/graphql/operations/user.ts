@@ -30,12 +30,12 @@ const userOperations = {
     inviteUserToConversation: gql`
       mutation InviteUserToConversation(
         $userId: String!
-        $conversationId: String! # $burek: Burek
+        $conversationId: String!
       ) {
         # name below must match the mutation name in user typeDefs (BE)
         inviteUserToConversation(
           userId: $userId
-          conversationId: $conversationId # burek: $burek
+          conversationId: $conversationId
         ) {
           success
           error

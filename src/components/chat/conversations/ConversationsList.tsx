@@ -111,11 +111,8 @@ const ConversationsList = ({
   };
 
   const onEditConversation = (conversation: ConversationPopulated) => {
-    // console.log("onEditConversation");
-    // console.log("conversation: ", conversation);
     setEditingConversation(conversation);
     openModal();
-    // closeModal();
   };
 
   const sortedConversations = [...conversations].sort(

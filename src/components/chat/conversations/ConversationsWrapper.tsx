@@ -14,6 +14,8 @@ import {
   MarkConversationAsReadUseMutationInput,
   MarkConversationAsReadUseMutationOutput,
   MessagesQueryOutput,
+  UpdateConversationUseMutationInput,
+  UpdateConversationUseMutationOutput,
 } from "../../../interfaces/graphqlInterfaces";
 import { SkeletonLoader } from "../../common/SkeletonLoader";
 import ConversationsList from "./ConversationsList";
@@ -31,8 +33,6 @@ const ConversationsWrapper: React.FunctionComponent<
   const {
     user: { id: userId },
   } = session;
-
-  // console.log("userId: ", userId);
 
   //* useQuery
   const {
@@ -55,6 +55,18 @@ const ConversationsWrapper: React.FunctionComponent<
     MarkConversationAsReadUseMutationOutput,
     MarkConversationAsReadUseMutationInput
   >(conversationOperations.Mutations.markConversationAsRead);
+
+  const [
+    updateConversation,
+    {
+      data: updateConversationData,
+      loading: updateConversationLoading,
+      error: updateConversationError,
+    },
+  ] = useMutation<
+    UpdateConversationUseMutationOutput,
+    UpdateConversationUseMutationInput
+  >(conversationOperations.Mutations.updateConversation);
 
   // conversationUpdated subscription
   useSubscription<ConversationUpdatedSubscriptionOutput, null>(
@@ -86,7 +98,6 @@ const ConversationsWrapper: React.FunctionComponent<
             query: conversationOperations.Queries.conversations,
           });
           if (!conversationsData) return;
-          // console.log("conversationsData", conversationsData);
           const filteredConversations = conversationsData.conversations.filter(
             (c) => c.id !== updatedConversationId
           );
@@ -125,7 +136,6 @@ const ConversationsWrapper: React.FunctionComponent<
               },
             });
           } else {
-            // console.log("else");
             client.writeQuery<ConversationsQueryOutput>({
               query: conversationOperations.Queries.conversations,
               data: {
@@ -221,15 +231,8 @@ const ConversationsWrapper: React.FunctionComponent<
     userOperations.Subscriptions.userInvitedToConversation,
     {
       onData: ({ client, data }) => {
-        // console.log("userInvitedToConversation subscription data: ", data);
-        // console.log("client: ", client);
         const { data: userInvitedToConversationData } = data;
         if (!userInvitedToConversationData) return;
-
-        console.log(
-          "userInvitedToConversationData",
-          userInvitedToConversationData
-        );
 
         if (
           userInvitedToConversationData.userInvitedToConversation
@@ -242,16 +245,15 @@ const ConversationsWrapper: React.FunctionComponent<
             conversationId,
           } = userInvitedToConversationData.userInvitedToConversation;
 
-          console.log(
-            `invitedUserId: ${invitedUserId}\ninvitingUserId: ${invitingUserId}\nconversationId: ${conversationId}`
-          );
           toast.loading(
             (t) => (
               <span>
                 User ${invitingUserUsername} has invited you to conversation
                 <div>
                   <button
-                    onClick={() => onHandleConversationInvitation(true, t.id)}
+                    onClick={() =>
+                      onHandleConversationInvitation(true, t.id, conversationId)
+                    }
                   >
                     Accept
                   </button>
@@ -272,17 +274,18 @@ const ConversationsWrapper: React.FunctionComponent<
     }
   );
 
-  const onHandleConversationInvitation = (accept: boolean, toastId: string) => {
-    if (accept) {
-      // return a positive response
-      console.log("accept");
-      // fire respondToConversationInvitationMutation
+  //! BUG: On every other attempt the user is added back twice (showing as two conversationItem entities).
+  //! Upon refresh there is one conversationItem entity (correct) but two user entities inside (e.g. brave, chromium, chrome chrome)
+  const onHandleConversationInvitation = async (
+    accept: boolean,
+    toastId: string,
+    conversationId?: string
+  ) => {
+    if (accept && conversationId) {
+      const { data } = await updateConversation({
+        variables: { conversationId, participantIds: [userId] },
+      });
     }
-    // return a negative response
-    else {
-      console.log("dismiss");
-    }
-
     toast.dismiss(toastId);
   };
 
