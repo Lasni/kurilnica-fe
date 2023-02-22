@@ -234,6 +234,11 @@ const ConversationsWrapper: React.FunctionComponent<
         const { data: userInvitedToConversationData } = data;
         if (!userInvitedToConversationData) return;
 
+        console.log(
+          "userInvitedToConversationData: ",
+          userInvitedToConversationData
+        );
+
         if (
           userInvitedToConversationData.userInvitedToConversation
             .invitedUserId === userId
@@ -282,9 +287,9 @@ const ConversationsWrapper: React.FunctionComponent<
     conversationId?: string
   ) => {
     if (accept && conversationId) {
-      const { data } = await updateConversation({
-        variables: { conversationId, participantIds: [userId] },
-      });
+      // const { data } = await updateConversation({
+      //   variables: { conversationId, participantIds: [userId] },
+      // });
     }
     toast.dismiss(toastId);
   };

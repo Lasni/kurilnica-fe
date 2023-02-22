@@ -23,15 +23,15 @@ export interface CreateUsernameUseMutationInput {
   username: string;
 }
 
-export interface InviteUserUseMutationOutput {
-  inviteUserToConversation: {
+export interface InviteUsersUseMutationOutput {
+  inviteUsersToConversation: {
     success: boolean;
     error: string;
-    userId: string;
+    usersId: Array<string>;
   };
 }
-export interface InviteUserUseMutationInput {
-  userId: string;
+export interface InviteUsersUseMutationInput {
+  usersIds: Array<string>;
   conversationId: string;
   // editingConversation: EditingConversation;
   // editingConversation: ConversationPopulated;
