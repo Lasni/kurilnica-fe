@@ -20,6 +20,8 @@ import userOperations from "../../../../graphql/operations/user";
 import {
   CreateConversationUseMutationInput,
   CreateConversationUseMutationOutput,
+  InviteUsersUseMutationInput,
+  InviteUsersUseMutationOutput,
   SearchedUser,
   SearchUsersQueryInput,
   SearchUsersQueryOutput,
@@ -29,10 +31,6 @@ import {
 import { Participants } from "./Participants";
 import { UserSearchList } from "./UserSearchList";
 import { isArrayOfStrings } from "../../../../util/typeGuards";
-import {
-  InviteUserUseMutationOutput,
-  InviteUserUseMutationInput,
-} from "../../../../interfaces/graphqlInterfaces";
 
 interface ConversationModalProps {
   isOpen: boolean;
@@ -72,14 +70,14 @@ export const ConversationModal = ({
 
   //* invite user
   const [
-    inviteUserToConversation,
+    inviteUsersToConversation,
     {
       data: inviteUserData,
       loading: inviteUserLoading,
       error: inviteUserError,
     },
-  ] = useMutation<InviteUserUseMutationOutput, InviteUserUseMutationInput>(
-    userOperations.Mutations.inviteUserToConversation
+  ] = useMutation<InviteUsersUseMutationOutput, InviteUsersUseMutationInput>(
+    userOperations.Mutations.inviteUsersToConversation
   );
 
   //* create conversation
@@ -180,9 +178,14 @@ export const ConversationModal = ({
     ];
 
     try {
-      const { data } = await inviteUserToConversation({
+      // console.log("handleUpdateConversation");
+      // console.log("conversationId: ", conversationId);
+      // console.log("participantIds: ", participantIds);
+      // console.log("userId: ", participantIds[0]);
+      // console.log("participantsIds:", participantIds);
+      const { data } = await inviteUsersToConversation({
         variables: {
-          userId: participantIds[0],
+          usersIds: participantIds,
           conversationId,
         },
       });
