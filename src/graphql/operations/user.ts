@@ -49,7 +49,7 @@ const userOperations = {
     userInvitedToConversation: gql`
       subscription UserInvitedToConversation {
         userInvitedToConversation {
-          invitedUserId
+          invitedUsersIds
           invitingUserId
           invitingUserUsername
           conversationId

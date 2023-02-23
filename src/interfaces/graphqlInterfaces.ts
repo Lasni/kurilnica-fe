@@ -157,7 +157,7 @@ export interface ConversationDeletedSubscriptionOutput {
 
 export interface UserInvitedToConversationSubscriptionOutput {
   userInvitedToConversation: {
-    invitedUserId: string;
+    invitedUsersIds: Array<string>;
     invitingUserId: string;
     invitingUserUsername: string;
     conversationId: string;

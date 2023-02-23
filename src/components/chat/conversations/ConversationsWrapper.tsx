@@ -231,6 +231,7 @@ const ConversationsWrapper: React.FunctionComponent<
     userOperations.Subscriptions.userInvitedToConversation,
     {
       onData: ({ client, data }) => {
+        console.log("userInvitedToConversationSubscription firing");
         const { data: userInvitedToConversationData } = data;
         if (!userInvitedToConversationData) return;
 
@@ -240,11 +241,12 @@ const ConversationsWrapper: React.FunctionComponent<
         );
 
         if (
-          userInvitedToConversationData.userInvitedToConversation
-            .invitedUserId === userId
+          userInvitedToConversationData.userInvitedToConversation.invitedUsersIds.includes(
+            userId
+          )
         ) {
           const {
-            invitedUserId,
+            invitedUsersIds,
             invitingUserId,
             invitingUserUsername,
             conversationId,
@@ -287,9 +289,9 @@ const ConversationsWrapper: React.FunctionComponent<
     conversationId?: string
   ) => {
     if (accept && conversationId) {
-      // const { data } = await updateConversation({
-      //   variables: { conversationId, participantIds: [userId] },
-      // });
+      const { data } = await updateConversation({
+        variables: { conversationId, participantIds: [userId] },
+      });
     }
     toast.dismiss(toastId);
   };
