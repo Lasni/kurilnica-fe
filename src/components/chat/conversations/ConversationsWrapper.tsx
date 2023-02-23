@@ -3,9 +3,11 @@ import { Box, Icon } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 import { ConversationParticipantPopulated } from "../../../../../backend/src/interfaces/graphqlInterfaces";
 import conversationOperations from "../../../graphql/operations/conversation";
 import messageOperations from "../../../graphql/operations/message";
+import userOperations from "../../../graphql/operations/user";
 import {
   ConversationCreatedSubscriptionData,
   ConversationDeletedSubscriptionOutput,
@@ -16,12 +18,10 @@ import {
   MessagesQueryOutput,
   UpdateConversationUseMutationInput,
   UpdateConversationUseMutationOutput,
+  UserInvitedToConversationSubscriptionOutput,
 } from "../../../interfaces/graphqlInterfaces";
 import { SkeletonLoader } from "../../common/SkeletonLoader";
 import ConversationsList from "./ConversationsList";
-import userOperations from "../../../graphql/operations/user";
-import { UserInvitedToConversationSubscriptionOutput } from "../../../interfaces/graphqlInterfaces";
-import toast from "react-hot-toast";
 
 interface ConversationsWrapperProps {
   session: Session;
@@ -231,14 +231,14 @@ const ConversationsWrapper: React.FunctionComponent<
     userOperations.Subscriptions.userInvitedToConversation,
     {
       onData: ({ client, data }) => {
-        console.log("userInvitedToConversationSubscription firing");
+        // console.log("userInvitedToConversationSubscription firing");
         const { data: userInvitedToConversationData } = data;
         if (!userInvitedToConversationData) return;
 
-        console.log(
-          "userInvitedToConversationData: ",
-          userInvitedToConversationData
-        );
+        // console.log(
+        //   "userInvitedToConversationData: ",
+        //   userInvitedToConversationData
+        // );
 
         if (
           userInvitedToConversationData.userInvitedToConversation.invitedUsersIds.includes(
@@ -288,6 +288,7 @@ const ConversationsWrapper: React.FunctionComponent<
     toastId: string,
     conversationId?: string
   ) => {
+    console.log("onHandleConversationInvitation FIRED");
     if (accept && conversationId) {
       const { data } = await updateConversation({
         variables: { conversationId, participantIds: [userId] },
