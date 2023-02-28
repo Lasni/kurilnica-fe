@@ -3,7 +3,8 @@ import { Box } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import { ConversationParticipantPopulated } from "../../../../../backend/src/interfaces/graphqlInterfaces";
 import conversationOperations from "../../../graphql/operations/conversation";
 import messageOperations from "../../../graphql/operations/message";
@@ -41,6 +42,7 @@ const ConversationsWrapper: React.FunctionComponent<
   } = session;
 
   const [popupData, setPopupData] = useState<PopupData | null>(null);
+  const [showPopup, setShowPopup] = useState(false);
 
   const clearPopupData = () => {
     setPopupData(null);
@@ -258,7 +260,8 @@ const ConversationsWrapper: React.FunctionComponent<
             conversationId,
           } = userInvitedToConversationData.userInvitedToConversation;
 
-          setPopupData({ conversationId, userId, invitingUserUsername });
+          // setPopupData({ conversationId, userId, invitingUserUsername });
+          setShowPopup(true);
           console.log("setting popupData");
         }
       },
@@ -384,6 +387,11 @@ const ConversationsWrapper: React.FunctionComponent<
     subscribeToNewConversations();
   }, []);
 
+  useEffect(() => {
+    console.log("useEffect firing");
+    toast("Wow so eezzy", { toastId: "eezy1" });
+  }, [showPopup]);
+
   return (
     <Box
       display={{ base: conversationId ? "none" : "flex", md: "flex" }}
@@ -403,11 +411,11 @@ const ConversationsWrapper: React.FunctionComponent<
           onViewConversationCallback={onViewConversation}
         />
       )}
-      {popupData && (
+      {showPopup && (
         <ToastComponent
-          invitingUserUsername={popupData.invitingUserUsername}
-          conversationId={popupData.conversationId}
-          userId={popupData.userId}
+          invitingUserUsername={""}
+          conversationId={""}
+          userId={""}
           clearPopupDataCallback={clearPopupData}
         />
       )}
