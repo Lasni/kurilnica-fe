@@ -1,4 +1,6 @@
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export interface ToastComponentProps {
   invitingUserUsername: string;
@@ -13,9 +15,13 @@ const ToastComponent = ({
   userId,
   clearPopupDataCallback,
 }: ToastComponentProps) => {
+  const notify = () => toast("Wow so easy!");
+
   return (
     <div>
-      {toast.loading(
+      <button onClick={notify}>Notify!</button>
+      <ToastContainer />
+      {/* {toast.loading(
         (t) => (
           <span>
             User {invitingUserUsername} has invited you to conversation
@@ -33,8 +39,7 @@ const ToastComponent = ({
         ),
         {
           // icon: <Icon />,
-        }
-      )}
+        } */}
     </div>
   );
 };
