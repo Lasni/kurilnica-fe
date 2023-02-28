@@ -1,8 +1,8 @@
 import { gql, useMutation, useQuery, useSubscription } from "@apollo/client";
-import { Box, Icon } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { ConversationParticipantPopulated } from "../../../../../backend/src/interfaces/graphqlInterfaces";
 import conversationOperations from "../../../graphql/operations/conversation";
@@ -22,9 +22,15 @@ import {
 } from "../../../interfaces/graphqlInterfaces";
 import { SkeletonLoader } from "../../common/SkeletonLoader";
 import ConversationsList from "./ConversationsList";
+import ToastComponent from "./toast/ToastComponent";
 
 interface ConversationsWrapperProps {
   session: Session;
+}
+export interface PopupData {
+  conversationId: string;
+  userId: string;
+  invitingUserUsername: string;
 }
 
 const ConversationsWrapper: React.FunctionComponent<
@@ -33,6 +39,12 @@ const ConversationsWrapper: React.FunctionComponent<
   const {
     user: { id: userId },
   } = session;
+
+  const [popupData, setPopupData] = useState<PopupData | null>(null);
+
+  const clearPopupData = () => {
+    setPopupData(null);
+  };
 
   //* useQuery
   const {
@@ -231,14 +243,8 @@ const ConversationsWrapper: React.FunctionComponent<
     userOperations.Subscriptions.userInvitedToConversation,
     {
       onData: ({ client, data }) => {
-        // console.log("userInvitedToConversationSubscription firing");
         const { data: userInvitedToConversationData } = data;
         if (!userInvitedToConversationData) return;
-
-        // console.log(
-        //   "userInvitedToConversationData: ",
-        //   userInvitedToConversationData
-        // );
 
         if (
           userInvitedToConversationData.userInvitedToConversation.invitedUsersIds.includes(
@@ -252,43 +258,18 @@ const ConversationsWrapper: React.FunctionComponent<
             conversationId,
           } = userInvitedToConversationData.userInvitedToConversation;
 
-          toast.loading(
-            (t) => (
-              <span>
-                User ${invitingUserUsername} has invited you to conversation
-                <div>
-                  <button
-                    onClick={() =>
-                      onHandleConversationInvitation(true, t.id, conversationId)
-                    }
-                  >
-                    Accept
-                  </button>
-                  <button
-                    onClick={() => onHandleConversationInvitation(false, t.id)}
-                  >
-                    Decline
-                  </button>
-                </div>
-              </span>
-            ),
-            {
-              icon: <Icon />,
-            }
-          );
+          setPopupData({ conversationId, userId, invitingUserUsername });
+          console.log("setting popupData");
         }
       },
     }
   );
 
-  //! BUG: On every other attempt the user is added back twice (showing as two conversationItem entities).
-  //! Upon refresh there is one conversationItem entity (correct) but two user entities inside (e.g. brave, chromium, chrome chrome)
   const onHandleConversationInvitation = async (
     accept: boolean,
     toastId: string,
     conversationId?: string
   ) => {
-    console.log("onHandleConversationInvitation FIRED");
     if (accept && conversationId) {
       const { data } = await updateConversation({
         variables: { conversationId, participantIds: [userId] },
@@ -420,6 +401,14 @@ const ConversationsWrapper: React.FunctionComponent<
           session={session}
           conversations={conversationsData?.conversations || []}
           onViewConversationCallback={onViewConversation}
+        />
+      )}
+      {popupData && (
+        <ToastComponent
+          invitingUserUsername={popupData.invitingUserUsername}
+          conversationId={popupData.conversationId}
+          userId={popupData.userId}
+          clearPopupDataCallback={clearPopupData}
         />
       )}
     </Box>
