@@ -3,10 +3,14 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export interface ToastComponentProps {
-  invitingUserUsername: string;
-  conversationId: string;
-  userId: string;
+  invitingUserUsername?: string;
+  conversationId?: string;
+  userId?: string;
   clearPopupDataCallback: () => void;
+  handleConversationInvitationCallback: (
+    accept: boolean,
+    conversationId?: string
+  ) => Promise<void>;
 }
 
 const ToastComponent = ({
@@ -14,13 +18,24 @@ const ToastComponent = ({
   conversationId,
   userId,
   clearPopupDataCallback,
+  handleConversationInvitationCallback,
 }: ToastComponentProps) => {
-  const notify = () => toast("Wow so easy!");
-
   return (
     <div>
-      <button onClick={notify}>Notify!</button>
-      <ToastContainer />
+      <span>
+        User {invitingUserUsername} has invited you to conversation
+        <div>
+          <button
+            onClick={() =>
+              handleConversationInvitationCallback(true, conversationId)
+            }
+          >
+            Accept
+          </button>
+          <br />
+          <button onClick={clearPopupDataCallback}>Decline</button>
+        </div>
+      </span>
       {/* {toast.loading(
         (t) => (
           <span>

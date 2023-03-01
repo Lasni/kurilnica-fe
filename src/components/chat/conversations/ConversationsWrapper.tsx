@@ -4,7 +4,7 @@ import { Session } from "next-auth";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 // import toast from "react-hot-toast";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { ConversationParticipantPopulated } from "../../../../../backend/src/interfaces/graphqlInterfaces";
 import conversationOperations from "../../../graphql/operations/conversation";
 import messageOperations from "../../../graphql/operations/message";
@@ -24,14 +24,15 @@ import {
 import { SkeletonLoader } from "../../common/SkeletonLoader";
 import ConversationsList from "./ConversationsList";
 import ToastComponent from "./toast/ToastComponent";
+import "react-toastify/dist/ReactToastify.css";
 
 interface ConversationsWrapperProps {
   session: Session;
 }
-export interface PopupData {
-  conversationId: string;
-  userId: string;
+interface PopupData {
   invitingUserUsername: string;
+  userId: string;
+  conversationId: string;
 }
 
 const ConversationsWrapper: React.FunctionComponent<
@@ -41,10 +42,17 @@ const ConversationsWrapper: React.FunctionComponent<
     user: { id: userId },
   } = session;
 
-  const [popupData, setPopupData] = useState<PopupData | null>(null);
-  const [showPopup, setShowPopup] = useState(false);
+  const [popupData, setPopupData] = useState<null | PopupData>(null);
+  // const [showPopup, setShowPopup] = useState(false);
+  // console.log("showPopup", showPopup);
+
+  // const [invitingUserUsername, setInvitingUserUsername] = useState<
+  //   string | null
+  // >(null);
+  // const [conversationId, setConversationId] = useState<string | null>(null);
 
   const clearPopupData = () => {
+    console.log("clearPopupData");
     setPopupData(null);
   };
 
@@ -260,9 +268,9 @@ const ConversationsWrapper: React.FunctionComponent<
             conversationId,
           } = userInvitedToConversationData.userInvitedToConversation;
 
-          // setPopupData({ conversationId, userId, invitingUserUsername });
-          setShowPopup(true);
-          console.log("setting popupData");
+          // setInvitingUserUsername(invitingUserUsername);
+          setPopupData({ conversationId, invitingUserUsername, userId });
+          // setShowPopup(true);
         }
       },
     }
@@ -270,15 +278,17 @@ const ConversationsWrapper: React.FunctionComponent<
 
   const onHandleConversationInvitation = async (
     accept: boolean,
-    toastId: string,
     conversationId?: string
   ) => {
     if (accept && conversationId) {
+      console.log("accept: ", accept);
+      console.log("conversationId", conversationId);
+      console.log("userId: ", userId);
       const { data } = await updateConversation({
         variables: { conversationId, participantIds: [userId] },
       });
+      return;
     }
-    toast.dismiss(toastId);
   };
 
   const onViewConversation = async (
@@ -388,13 +398,32 @@ const ConversationsWrapper: React.FunctionComponent<
   }, []);
 
   useEffect(() => {
-    console.log("useEffect firing");
-    toast("Wow so eezzy", { toastId: "eezy1" });
-  }, [showPopup]);
+    if (popupData) {
+      toast(
+        <ToastComponent
+          invitingUserUsername={popupData.invitingUserUsername}
+          conversationId={popupData.conversationId}
+          userId={popupData.userId}
+          clearPopupDataCallback={clearPopupData}
+          handleConversationInvitationCallback={onHandleConversationInvitation}
+        />,
+        {
+          toastId: popupData.userId,
+        }
+      );
+      // toast.onChange instead of deprecated onClose and onOpen
+      toast.onChange((t) => {
+        if (t.status === "removed") {
+          // setShowPopup(false);
+          setPopupData(null);
+        }
+      });
+    }
+  }, [popupData]);
 
   return (
     <Box
-      display={{ base: conversationId ? "none" : "flex", md: "flex" }}
+      display={{ base: conversationId ? "none" : "block", md: "flex" }}
       flexDir="column"
       width={{ base: `100%`, md: `400px` }}
       gap={4}
@@ -402,6 +431,8 @@ const ConversationsWrapper: React.FunctionComponent<
       py={`6`}
       px={`3`}
     >
+      {popupData && <ToastContainer />}
+
       {conversationsLoading ? (
         <SkeletonLoader count={6} height="80px" />
       ) : (
@@ -409,14 +440,6 @@ const ConversationsWrapper: React.FunctionComponent<
           session={session}
           conversations={conversationsData?.conversations || []}
           onViewConversationCallback={onViewConversation}
-        />
-      )}
-      {showPopup && (
-        <ToastComponent
-          invitingUserUsername={""}
-          conversationId={""}
-          userId={""}
-          clearPopupDataCallback={clearPopupData}
         />
       )}
     </Box>
