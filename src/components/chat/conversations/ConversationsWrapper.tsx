@@ -43,6 +43,7 @@ const ConversationsWrapper: React.FunctionComponent<
   } = session;
 
   const [popupData, setPopupData] = useState<null | PopupData>(null);
+  const [shouldAddToConversation, setShouldAddToConversation] = useState(false);
   // const [showPopup, setShowPopup] = useState(false);
   // console.log("showPopup", showPopup);
 
@@ -280,14 +281,16 @@ const ConversationsWrapper: React.FunctionComponent<
     accept: boolean,
     conversationId?: string
   ) => {
+    console.log("onHandleConversationInvitation fired");
     if (accept && conversationId) {
-      console.log("accept: ", accept);
-      console.log("conversationId", conversationId);
-      console.log("userId: ", userId);
-      const { data } = await updateConversation({
-        variables: { conversationId, participantIds: [userId] },
-      });
-      return;
+      setShouldAddToConversation(true);
+      // console.log("accept: ", accept);
+      // console.log("conversationId", conversationId);
+      // console.log("userId: ", userId);
+      // const { data } = await updateConversation({
+      //   variables: { conversationId, participantIds: [userId] },
+      // });
+      // return;
     }
   };
 
@@ -396,6 +399,26 @@ const ConversationsWrapper: React.FunctionComponent<
   useEffect(() => {
     subscribeToNewConversations();
   }, []);
+
+  useEffect(() => {
+    console.log("shouldAddToConversation: ", shouldAddToConversation);
+    if (shouldAddToConversation && popupData) {
+      console.log("useEffect fired");
+      const fetchData = async () => {
+        console.log("fetchData");
+        const { data } = await updateConversation({
+          variables: {
+            conversationId: popupData?.conversationId,
+            participantIds: [popupData.userId],
+          },
+        });
+        return data;
+      };
+
+      fetchData();
+    }
+    setShouldAddToConversation(false);
+  }, [shouldAddToConversation, popupData, updateConversation]);
 
   useEffect(() => {
     if (popupData) {
